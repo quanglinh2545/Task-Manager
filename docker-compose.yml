@@ -1,0 +1,27 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: laravel-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+      - ./nginx/php.ini:/usr/local/etc/php/conf.d/uploads.ini
+    networks:
+      - edapt_lp_free
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - 8020:80
+    volumes:
+      - ./:/var/www
+      - ./nginx:/etc/nginx/conf.d/
+    networks:
+      - edapt_lp_free
+networks:
+  edapt_lp_free:
+    driver: bridge
