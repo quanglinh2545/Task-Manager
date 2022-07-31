@@ -22,7 +22,7 @@ export function ProjectContextProvider({
   const [project, setProject] = useState<Project | null>(null)
   const location = useLocation()
   const isMounted = useRef(false)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const fetchProject = useCallback(async (projectKey: string) => {
     try {
       setLoading(true)
@@ -65,7 +65,14 @@ export function ProjectContextProvider({
   return (
     <ProjectContext.Provider value={memoedValue}>
       {loading ? (
-        <Box sx={{ display: 'flex', height: '300px' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            height: '100vh',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           <CircularProgress />
         </Box>
       ) : (
