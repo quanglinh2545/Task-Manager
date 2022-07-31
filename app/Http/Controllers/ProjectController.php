@@ -181,4 +181,31 @@ class ProjectController extends Controller
 
         return $this->sendRespondSuccess($users);
     }
+
+    public function gantt(string $projectKey)
+    {
+        $project = Project::where('key', $projectKey)->firstOrFail();
+        if (!$project->hasPermissionCreateIssue(auth()->user())) return $this->sendForbidden();
+        $issues = Issue::query()
+            ->where('project_id', $project->id)
+            ->leftJoin('users', 'users.id', '=', 'issues.assignee_id')
+            ->select(
+                'issues.id',
+                'issues.subject',
+                'issues.start_date',
+                'issues.due_date',
+                'issues.status',
+                'issues.priority',
+                'issues.level',
+                'issues.tracker',
+                'issues.estimate_time',
+                'issues.percent_complete',
+                'issues.description',
+                'users.name as assignee'
+            )
+            ->orderBy('start_date', 'asc')
+            ->get();
+
+        return $this->sendRespondSuccess($issues);
+    }
 }

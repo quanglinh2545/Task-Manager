@@ -77,3 +77,8 @@ export const searchMemberForInvite = (projectKey: string, search_key: string) =>
       search_key,
     },
   })
+
+export const projectGantt = (projectKey: string) =>
+  defHttp.get<any[]>({
+    url: '/project/' + projectKey + '/gantt',
+  })

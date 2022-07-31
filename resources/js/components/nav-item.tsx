@@ -36,17 +36,18 @@ export const NavItem: React.FC<Props> = (props) => {
           disableRipple
           sx={
             {
+              borderRadius: 0,
               backgroundColor: active && 'rgba(255,255,255, 0.08)',
-              borderRadius: 1,
-              color: active ? 'secondary.main' : 'neutral.300',
+              color: active ? '#17a2ff' : '#444',
               fontWeight: active && 'fontWeightBold',
               justifyContent: 'flex-start',
+              borderBottom: active && '2px solid #17a2ff',
               px: 3,
               textAlign: 'left',
               textTransform: 'none',
               width: '100%',
               '& .MuiButton-startIcon': {
-                color: active ? 'secondary.main' : 'neutral.400',
+                color: active ? '#17a2ff' : '#444',
               },
               '&:hover': {
                 backgroundColor: 'rgba(255,255,255, 0.08)',

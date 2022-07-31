@@ -12,10 +12,9 @@ import { ListAlt, Home, Equalizer, Add } from '@mui/icons-material'
 import { ChartBar as ChartBarIcon } from '../icons/chart-bar'
 import { Cog as CogIcon } from '../icons/cog'
 import { User as UserIcon } from '../icons/user'
-import { Logo } from './logo'
 import { NavItem } from './nav-item'
 import useAuth from '../context/useAuth'
-
+import useProject from '../context/useProject'
 interface Props {
   open: boolean
   onClose: () => void
@@ -23,6 +22,7 @@ interface Props {
 export const DashboardSidebar: React.FC<Props> = (props) => {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { project } = useProject()
   const params = useParams()
   const { open, onClose } = props
   const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'), {
@@ -37,7 +37,7 @@ export const DashboardSidebar: React.FC<Props> = (props) => {
     return [
       {
         href: '/projects/' + projectKey,
-        icon: <Home />,
+        icon: <Home fontSize="small" />,
         title: 'Home',
       },
       {
@@ -52,12 +52,12 @@ export const DashboardSidebar: React.FC<Props> = (props) => {
       },
       {
         href: '/projects/' + projectKey + '/issues',
-        icon: <ListAlt />,
+        icon: <ListAlt fontSize="small" />,
         title: 'Issues',
       },
       {
         href: '/projects/' + projectKey + '/spents',
-        icon: <ListAlt />,
+        icon: <ListAlt fontSize="small" />,
         title: 'Spent time',
       },
       {
@@ -81,20 +81,18 @@ export const DashboardSidebar: React.FC<Props> = (props) => {
         height: '100%',
       }}
     >
-      <Box sx={{ p: 1 }}>
-        <Link to="/">
-          <Logo
-            sx={{
-              height: 42,
-              width: 42,
-            }}
-          />
-        </Link>
-      </Box>
+      {project ? (
+        <Box sx={{ p: 2, background: '#17a2ff', color: '#fff' }}>
+          <Typography variant="body2">Project:</Typography>
+          <Typography variant="h5">{project.name}</Typography>
+        </Box>
+      ) : (
+        <Box sx={{ py: 3 }} />
+      )}
       <Divider
         sx={{
-          borderColor: '#2D3748',
-          my: 2,
+          borderColor: '#efefef',
+          mb: 2,
         }}
       />
       <Box sx={{ flexGrow: 1 }}>
@@ -107,7 +105,7 @@ export const DashboardSidebar: React.FC<Props> = (props) => {
           />
         ))}
       </Box>
-      <Divider sx={{ borderColor: '#2D3748' }} />
+      <Divider sx={{ borderColor: '#efefef' }} />
       <Box
         sx={{
           px: 1,
@@ -135,8 +133,8 @@ export const DashboardSidebar: React.FC<Props> = (props) => {
         open
         PaperProps={{
           sx: {
-            backgroundColor: 'neutral.900',
-            color: '#FFFFFF',
+            backgroundColor: 'white',
+            color: '#222',
             width: 240,
           },
         }}
@@ -154,8 +152,8 @@ export const DashboardSidebar: React.FC<Props> = (props) => {
       open={open}
       PaperProps={{
         sx: {
-          backgroundColor: 'neutral.900',
-          color: '#FFFFFF',
+          backgroundColor: 'white',
+          color: '#222',
           width: 240,
         },
       }}

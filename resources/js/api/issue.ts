@@ -124,3 +124,5 @@ export const createComment = (data: any) => {
     data,
   })
 }
+export const deleteIssue = (id: number, _u?: string) =>
+  defHttp.delete({ url: indexApi + '/' + id })

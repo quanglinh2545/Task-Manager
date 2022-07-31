@@ -1,57 +1,13 @@
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  CircularProgress,
-} from '@mui/material'
+import { Box, Container, Grid, Typography } from '@mui/material'
 import TimeTracking from '/@/components/project/TimeTracking'
 import IssueTracking from '/@/components/project/IssueTracking'
 import ProjectMember from '/@/components/project/ProjectMember'
-
-import { showProject } from '/@/api/project'
+import useProject from '/@/context/useProject'
 import Page404 from '/@/pages/404'
-import { Project } from '/@/api/models/projectModel'
 
 const ProjectPage = () => {
-  const params = useParams()
-  const isMounted = useRef(false)
-  const [project, setProject] = useState<Project | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  const fetchProject = useCallback(async (projectKey: string) => {
-    try {
-      setLoading(true)
-      const response = await showProject(projectKey)
-      if (isMounted.current) {
-        setProject(response)
-      }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true
-      if (!params.key) return
-      fetchProject(params.key)
-    }
-    return () => {
-      isMounted.current = false
-    }
-  }, [params.key])
-
-  if (loading)
-    return (
-      <Box sx={{ display: 'flex', height: '300px' }}>
-        <CircularProgress />
-      </Box>
-    )
+  const { project } = useProject()
   if (!project) return <Page404 />
-
   return (
     <Box
       component="main"

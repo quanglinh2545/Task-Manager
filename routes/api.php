@@ -48,6 +48,7 @@ Route::group(
         Route::post('/change-info', [AuthController::class, 'changeInfo']);
         Route::get('/project/{projectKey}/memberAndCategory', [ProjectController::class, 'memberAndCategory']);
         Route::get('/project/{projectKey}/searchMemberForInvite', [ProjectController::class, 'searchMemberForInvite']);
+        Route::get('/project/{projectKey}/gantt', [ProjectController::class, 'gantt']);
 
         Route::get('/project/pluck', [ProjectController::class, 'pluck']);
         Route::get('/issue/{issue}/spents', [IssueController::class, 'spents']);

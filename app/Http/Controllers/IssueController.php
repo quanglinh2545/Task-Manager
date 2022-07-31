@@ -313,9 +313,11 @@ class IssueController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Issue $issue)
     {
-        //
+        if (!$issue->project->hasPermissionShowIssue(auth()->user())) return $this->sendForbidden();
+        $issue->delete();
+        return $this->sendRespondSuccess();
     }
 
     public function spents(Issue $issue)

@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AppContextProvider } from './context/useApp'
+import { ProjectContextProvider } from './context/useProject'
 
 import IndexPage from './pages/index'
 import LoginPage from './pages/login'
@@ -51,86 +52,91 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <ThemeProvider theme={theme}>
           <AppContextProvider>
-            <CssBaseline />
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route
-                path="/*"
-                element={
-                  <AuthGuard>
-                    <Routes>
-                      <Route path="/" element={<IndexPage />} />
-                      <Route path="/account" element={<AccountPage />} />
-                      <Route
-                        path="/account/:id"
-                        element={<AccountDetailPage />}
-                      />
-                      <Route path="/accounts" element={<AccountsPage />} />
-                      <Route path="/projects/:key" element={<ProjectPage />} />
-                      <Route
-                        path="/projects/:key/add"
-                        element={<ProjectAddIssuePage />}
-                      />
-                      <Route
-                        path="/projects/:key/add/spent"
-                        element={<ProjectAddSpentPage />}
-                      />
-                      <Route
-                        path="/projects/:key/board"
-                        element={<ProjectBoardPage />}
-                      />
-                      <Route
-                        path="/projects/:key/gantt-chart"
-                        element={<ProjectGanttPage />}
-                      />
-                      <Route
-                        path="/projects/:key/setting"
-                        element={<ProjectSettingPage />}
-                      />
-                      <Route
-                        path="/projects/:key/activity"
-                        element={<ProjectActivityPage />}
-                      />
-                      <Route
-                        path="/projects/:key/issues"
-                        element={<ProjectIssuesPage />}
-                      />
-                      <Route
-                        path="/projects/:key/issues/:id"
-                        element={<ProjectIssuePage />}
-                      />
-                      <Route
-                        path="/projects/:key/issues/:id/edit"
-                        element={<ProjectIssueEditPage />}
-                      />
-                      <Route
-                        path="/projects/:key/issues/:id/spent"
-                        element={<ProjectIssueSpentPage />}
-                      />
+            <ProjectContextProvider>
+              <CssBaseline />
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route
+                  path="/*"
+                  element={
+                    <AuthGuard>
+                      <Routes>
+                        <Route path="/" element={<IndexPage />} />
+                        <Route path="/account" element={<AccountPage />} />
+                        <Route
+                          path="/account/:id"
+                          element={<AccountDetailPage />}
+                        />
+                        <Route path="/accounts" element={<AccountsPage />} />
+                        <Route
+                          path="/projects/:key"
+                          element={<ProjectPage />}
+                        />
+                        <Route
+                          path="/projects/:key/add"
+                          element={<ProjectAddIssuePage />}
+                        />
+                        <Route
+                          path="/projects/:key/add/spent"
+                          element={<ProjectAddSpentPage />}
+                        />
+                        <Route
+                          path="/projects/:key/board"
+                          element={<ProjectBoardPage />}
+                        />
+                        <Route
+                          path="/projects/:key/gantt-chart"
+                          element={<ProjectGanttPage />}
+                        />
+                        <Route
+                          path="/projects/:key/setting"
+                          element={<ProjectSettingPage />}
+                        />
+                        <Route
+                          path="/projects/:key/activity"
+                          element={<ProjectActivityPage />}
+                        />
+                        <Route
+                          path="/projects/:key/issues"
+                          element={<ProjectIssuesPage />}
+                        />
+                        <Route
+                          path="/projects/:key/issues/:id"
+                          element={<ProjectIssuePage />}
+                        />
+                        <Route
+                          path="/projects/:key/issues/:id/edit"
+                          element={<ProjectIssueEditPage />}
+                        />
+                        <Route
+                          path="/projects/:key/issues/:id/spent"
+                          element={<ProjectIssueSpentPage />}
+                        />
 
-                      <Route
-                        path="/projects/:key/spents"
-                        element={<ProjectSpentListPage />}
-                      />
-                      <Route
-                        path="/projects/:key/spents/:id"
-                        element={<ProjectSpentPage />}
-                      />
-                      <Route
-                        path="/projects/:key/members/:id"
-                        element={<ProjectMemberPage />}
-                      />
-                      <Route
-                        path="/projects/:key/spents/:id/edit"
-                        element={<ProjectSpentEditPage />}
-                      />
-                      <Route path="*" element={<Page404 />} />
-                    </Routes>
-                  </AuthGuard>
-                }
-              />
-            </Routes>
+                        <Route
+                          path="/projects/:key/spents"
+                          element={<ProjectSpentListPage />}
+                        />
+                        <Route
+                          path="/projects/:key/spents/:id"
+                          element={<ProjectSpentPage />}
+                        />
+                        <Route
+                          path="/projects/:key/members/:id"
+                          element={<ProjectMemberPage />}
+                        />
+                        <Route
+                          path="/projects/:key/spents/:id/edit"
+                          element={<ProjectSpentEditPage />}
+                        />
+                        <Route path="*" element={<Page404 />} />
+                      </Routes>
+                    </AuthGuard>
+                  }
+                />
+              </Routes>
+            </ProjectContextProvider>
           </AppContextProvider>
         </ThemeProvider>
       </LocalizationProvider>

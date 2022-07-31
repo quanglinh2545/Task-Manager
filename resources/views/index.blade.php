@@ -18,8 +18,7 @@
             <link rel="stylesheet" href="{{ config('app.url') . '/' . $css }}" />
         @endforeach
     @endif
-    <script type="module" crossorigin src="{{ config('app.url') . '/' . $manifest['resources/js/main.tsx']['file'] }}">
-    </script>
+    <script type="module" crossorigin src="{{ config('app.url') . '/' . $manifest['resources/js/main.tsx']['file'] }}"></script>
 @else
     {{-- Development --}}
     <script type="module">
@@ -129,6 +128,17 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .gantt_task_line {
+            background-color: #E3133D;
+        }
+
+        .gantt_task_line .gantt_task_progress {
+            background-color: #069834;
+        }
+    </style>
 </body>
+
 
 </html>
