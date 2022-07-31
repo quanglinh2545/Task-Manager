@@ -62,6 +62,8 @@ Route::group(
         Route::resource('/activity', ActivityController::class);
         Route::resource('/spent', SpentTimeController::class);
         Route::post('/comment', [CommentController::class, 'store']);
+        Route::put('/comment/{comment}', [CommentController::class, 'update']);
+        Route::delete('/comment/{comment}', [CommentController::class, 'destroy']);
         Route::get('/notification', [NotificationController::class, 'index']);
     }
 );

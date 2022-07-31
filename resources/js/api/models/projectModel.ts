@@ -12,6 +12,7 @@ export interface Project {
   estimate_time: number
   spent_time: number
   joined_members: ProjectMember[]
+  current_role: RoleEnum
 }
 
 export interface IssueTracking {

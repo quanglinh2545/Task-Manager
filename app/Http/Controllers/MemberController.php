@@ -127,7 +127,12 @@ class MemberController extends Controller
             ->join('members', 'members.user_id', '=', 'users.id')
             ->where('members.project_id', $project->id)
             ->where('users.id', $id)
-            ->firstOrFail();
+            ->first();
+        if (!$member) {
+            $member = User::findOrFail($id);
+            if ($member->role != User::ROLE_ADMIN) return $this->sendRespondError();
+        }
+        if (!$member) return $this->sendRespondError();
 
         $issues = Issue::query()
             ->where('assignee_id', $member->id)

@@ -12,6 +12,8 @@ export interface Comment {
   user_name: string
   user_avatar: string | null
   is_html: number
+  can_edit?: boolean
+  raw_content?: string
 }
 export interface Issue {
   assignee_id: null | number

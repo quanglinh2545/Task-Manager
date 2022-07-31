@@ -96,6 +96,14 @@ class ProjectController extends Controller
             ->select('users.id', 'users.name', 'members.role')
             ->join('users', 'users.id', '=', 'members.user_id')
             ->get();
+        if (auth()->user()->role === 'admin')
+            $project->current_role = 'admin';
+        else {
+            $member = Member::where('project_id', $project->id)
+                ->where('user_id', auth()->id())
+                ->firstOrFail();
+            $project->current_role = $member->role;
+        }
         return $this->sendRespondSuccess($project);
     }
 

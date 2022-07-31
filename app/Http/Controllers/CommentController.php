@@ -103,9 +103,15 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Comment $comment)
     {
-        //
+        if ($comment->is_html) return $this->sendForbidden();
+        if ($comment->user_id != auth()->id() && !$comment->issue->project->hasPermissionCreateIssue(auth()->user())) {
+            return $this->sendForbidden();
+        }
+        $comment->content = $request->content ?? null;
+        $comment->save();
+        return $this->sendRespondSuccess();
     }
 
     /**
@@ -114,8 +120,16 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Comment $comment)
     {
-        //
+        if ($comment->user_id === auth()->id() && $comment->is_html === 0) {
+            $comment->delete();
+            return $this->sendRespondSuccess();
+        }
+        if ($comment->issue->project->hasPermissionCreateIssue(auth()->user())) {
+            $comment->delete();
+            return $this->sendRespondSuccess();
+        }
+        return $this->sendForbidden();
     }
 }

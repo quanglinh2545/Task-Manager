@@ -1,17 +1,14 @@
 import {
   Box,
   Button,
-  Chip,
-  Container,
   Grid,
-  Icon,
   Skeleton,
   Tab,
   Tabs,
   Typography,
   CircularProgress,
-  TextField,
   Avatar,
+  IconButton,
 } from '@mui/material'
 import Page404 from '../../404'
 import {
@@ -32,6 +29,13 @@ import { UserCircle as UserCircleIcon } from '/@/icons/user-circle'
 import { stateToHTML } from 'draft-js-export-html'
 import Editor from '/@/components/Editor'
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import CancelIcon from '@mui/icons-material/Cancel'
+import useProject from '/@/context/useProject'
+import { updateComment, deleteComment } from '/@/api/comment'
+import React from 'react'
+
 interface TabPanelProps {
   children?: React.ReactNode
   index: number
@@ -41,18 +45,116 @@ interface TabPanelProps {
 function CommentComponent({
   comment,
   projectKey,
+  handleDeleteComment,
+  handleUpdateComment,
 }: {
   comment: Comment
   projectKey: string
+  handleDeleteComment: React.MouseEventHandler
+  handleUpdateComment: (id: number, content: string) => Promise<void>
 }) {
+  const [editing, setEditing] = useState(false)
+  const [content, setContent] = useState(EditorState.createEmpty())
+  const [loading, setLoading] = useState(false)
+  const handleEdit = useCallback(() => {
+    if (comment.is_html === 0 && comment.can_edit) {
+      setEditing(true)
+      try {
+        comment.raw_content &&
+          setContent(
+            EditorState.createWithContent(
+              convertFromRaw(JSON.parse(comment.raw_content))
+            )
+          )
+      } catch (err) {
+        console.log(err)
+      }
+    } else {
+      setContent(EditorState.createEmpty())
+      return setEditing(false)
+    }
+  }, [comment])
+  const handleCancel = useCallback(() => {
+    setEditing(false)
+    setContent(EditorState.createEmpty())
+  }, [])
+  const handleUpdate = useCallback(async () => {
+    try {
+      setLoading(true)
+      handleUpdateComment(
+        comment.id,
+        JSON.stringify(convertToRaw(content.getCurrentContent()))
+      )
+      await new Promise((r) => setTimeout(r, 500))
+      handleCancel()
+    } catch (err) {
+      console.log('handleUpdate', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [comment, content])
+
+  if (editing)
+    return (
+      <Box
+        sx={{
+          border: '1px solid #e0e0e0',
+          mb: 2,
+          p: 2,
+          position: 'relative',
+          background: '#fff',
+          pr: 6,
+        }}
+      >
+        <Editor setEditorState={setContent} editorState={content} />
+        <LoadingButton
+          loading={loading}
+          sx={{ mt: 2 }}
+          size="small"
+          variant="contained"
+          onClick={handleUpdate}
+        >
+          Save
+        </LoadingButton>
+        <Button
+          sx={{ mt: 2, ml: 2 }}
+          size="small"
+          color="error"
+          onClick={handleCancel}
+        >
+          Cancel
+        </Button>
+      </Box>
+    )
   return (
     <Box
       sx={{
         border: '1px solid #e0e0e0',
         mb: 2,
         p: 2,
+        position: 'relative',
       }}
     >
+      {comment.is_html === 0 && comment.can_edit && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+          }}
+        >
+          <IconButton color="success" onClick={handleEdit}>
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            color="error"
+            onClick={handleDeleteComment}
+            data-id={comment.id}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      )}
       <div className="flex items-start gap-1">
         <Avatar
           sx={{
@@ -108,8 +210,9 @@ function a11yProps(index: number) {
 
 const IssuePage: React.FC = () => {
   const params = useParams()
-  const { toastError, toastSuccess } = useApp()
+  const { toastError, toastSuccess, createConfirmModal } = useApp()
   const { user } = useAuth()
+  const { project } = useProject()
   const isMounted = useRef(false)
   const [loading, setLoading] = useState(true)
   const [loadingTab, setLoadingTab] = useState(true)
@@ -140,15 +243,21 @@ const IssuePage: React.FC = () => {
     try {
       setLoadingTab(true)
       const response = await getIssueComments(+params.id!)
-      if (isMounted.current)
+      if (isMounted.current) {
         setComments(
           response.map((item) => ({
             ...item,
             content: item.is_html
               ? item.content
               : stateToHTML(convertFromRaw(JSON.parse(item.content))),
+            can_edit:
+              project?.current_role === 'member'
+                ? item.user_id === user?.id
+                : true,
+            raw_content: item.content,
           }))
         )
+      }
     } catch (error) {
       setSpents([])
     } finally {
@@ -174,6 +283,9 @@ const IssuePage: React.FC = () => {
             user_name: user!.name,
             user_avatar: user!.avatar,
             content: stateToHTML(convertFromRaw(JSON.parse(response.content))),
+            can_edit: true,
+            is_html: 0,
+            raw_content: response.content,
           },
           ...comments,
         ])
@@ -216,6 +328,48 @@ const IssuePage: React.FC = () => {
       setTimeout(() => (isMounted.current ? setLoading(false) : null), 250)
     }
   }, [params])
+
+  const handleDeleteComment = useCallback((event: React.MouseEvent) => {
+    const target = event.target as HTMLElement
+    const buttonTarget = target.closest('button') as HTMLButtonElement
+    const id = buttonTarget.dataset.id ? parseInt(buttonTarget.dataset.id) : 0
+    if (!id) return
+    createConfirmModal({
+      title: 'Delete comment',
+      content: 'Are you sure you want to delete this comment?',
+      onConfirm: async () => {
+        try {
+          await deleteComment(id)
+          if (isMounted.current) {
+            setComments((comments) => comments.filter((item) => item.id !== id))
+          }
+        } catch (error: any) {
+          console.log(error)
+        }
+      },
+    })
+  }, [])
+
+  const handleUpdateComment = useCallback(
+    async (id: number, content: string) => {
+      const index = comments.findIndex((item) => item.id === id)
+      if (index === -1) return
+      await updateComment(id, content)
+      if (isMounted.current) {
+        setComments((comments) => [
+          ...comments.slice(0, index),
+          {
+            ...comments[index],
+            content: stateToHTML(convertFromRaw(JSON.parse(content))),
+            raw_content: content,
+          },
+          ...comments.slice(index + 1),
+        ])
+      }
+    },
+    [comments]
+  )
+
   useEffect(() => {
     if (!isMounted.current) {
       isMounted.current = true
@@ -386,6 +540,8 @@ const IssuePage: React.FC = () => {
                     comment={comment}
                     key={comment.id}
                     projectKey={params.key!}
+                    handleDeleteComment={handleDeleteComment}
+                    handleUpdateComment={handleUpdateComment}
                   />
                 ))}
               </div>
