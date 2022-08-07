@@ -29,6 +29,8 @@ class UpdateAccountRequest extends FormRequest
             'email' => 'required|string|email|unique:users,email,' . $this->id,
             'password' => 'nullable|min:4|confirmed',
             'role' => 'required|in:' . User::ROLE_ADMIN . ',' . User::ROLE_MEMBER,
+            'birthday' => 'nullable|date',
+            'address' => 'nullable|string',
         ];
     }
 }

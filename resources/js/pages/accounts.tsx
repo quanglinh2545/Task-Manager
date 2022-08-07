@@ -22,6 +22,8 @@ import * as Yup from 'yup'
 import useApp from '/@/context/useApp'
 import { RoleEnum } from '/@/enums/roleEnum'
 import useAuth from '../context/useAuth'
+import { DatePicker } from '@mui/lab'
+import { formatDateToDateDB } from '../utils/format'
 
 const Customers = () => {
   const { toastError, toastSuccess } = useApp()
@@ -41,6 +43,8 @@ const Customers = () => {
   const isMounted = useRef(false)
   const idUpdate = useRef(0)
   const [showPassword, setShowPassword] = useState(false)
+  const [birthday, setBirthday] = useState<Date | null>(null)
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -48,6 +52,7 @@ const Customers = () => {
       password_confirmation: '',
       password: '',
       role: RoleEnum.ADMIN,
+      address: '',
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -73,6 +78,7 @@ const Customers = () => {
         if (!idUpdate.current) {
           await createAccount({
             ...formik.values,
+            birthday: formatDateToDateDB(birthday),
           })
           toastSuccess('Create account success')
         } else {
@@ -86,6 +92,7 @@ const Customers = () => {
             data.password = undefined
             data.password_confirmation = undefined
           }
+          data.birthday = formatDateToDateDB(birthday)
           await updateAccount(data)
           toastSuccess('Update account success')
         }
@@ -117,8 +124,13 @@ const Customers = () => {
       if (index !== -1) {
         idUpdate.current = id
         const roleName = accounts[index].role
+        setBirthday(
+          accounts[index].birthday ? new Date(accounts[index].birthday!) : null
+        )
         formik.setValues({
+          ...formik.values,
           ...accounts[index],
+          address: accounts[index].address || '',
           role: roleName,
           password: '123123',
           password_confirmation: '123123',
@@ -194,6 +206,20 @@ const Customers = () => {
     [user]
   )
 
+  const handleCreate = useCallback(() => {
+    idUpdate.current = 0
+    formik.setValues({
+      name: '',
+      email: '',
+      password_confirmation: '',
+      password: '',
+      role: RoleEnum.ADMIN,
+      address: '',
+    })
+    setBirthday(null)
+    toggleOpen()
+  }, [])
+
   return (
     <Box
       component="main"
@@ -208,7 +234,7 @@ const Customers = () => {
           role={role}
           onSearchKeyChange={setSearchKey}
           onRoleChange={setRole}
-          onCreate={toggleOpen}
+          onCreate={handleCreate}
           isAdmin={isAdmin}
         />
         <Box sx={{ mt: 3 }}>
@@ -233,7 +259,7 @@ const Customers = () => {
         <Dialog
           open={open}
           onClose={toggleOpen}
-          title="Create new account"
+          title={idUpdate.current === 0 ? 'Create new account' : 'Edit account'}
           loading={loadingForm}
           onConfirm={formik.handleSubmit}
           confirmText="Save"
@@ -267,6 +293,36 @@ const Customers = () => {
                   onChange={formik.handleChange}
                   value={formik.values.email}
                   variant="outlined"
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <TextField
+                  error={Boolean(
+                    formik.touched.address && formik.errors.address
+                  )}
+                  helperText={formik.touched.address && formik.errors.address}
+                  fullWidth
+                  label="Address"
+                  name="address"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.address}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <DatePicker
+                  renderInput={(props) => (
+                    <TextField
+                      {...props}
+                      fullWidth
+                      name="birthday"
+                      variant="outlined"
+                      label="Birthday"
+                    />
+                  )}
+                  onChange={setBirthday}
+                  value={birthday}
                 />
               </Grid>
               {idUpdate.current !== 0 && (

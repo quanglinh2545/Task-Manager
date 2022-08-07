@@ -120,8 +120,8 @@ export const AccountProfileDetails: React.FC<any> = (props) => {
                     fullWidth
                     name="birthday"
                     required
-                    onBlur={formik.handleBlur}
                     variant="outlined"
+                    label="Birthday"
                   />
                 )}
                 onChange={handleChangeDate}

@@ -24,6 +24,8 @@ export const createAccount = (data: {
   email: string
   password_confirmation: string
   role: RoleEnum
+  birthday: string | null
+  address: string | null
 }) =>
   defHttp.post({
     url: indexApi,

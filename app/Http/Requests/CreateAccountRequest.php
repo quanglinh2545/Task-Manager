@@ -29,6 +29,8 @@ class CreateAccountRequest extends FormRequest
             'email' => 'required|string|email|unique:users,email',
             'password' => 'required|min:4|confirmed',
             'role' => 'required|in:' . User::ROLE_ADMIN . ',' . User::ROLE_MEMBER,
+            'birthday' => 'nullable|date',
+            'address' => 'nullable|string',
         ];
     }
 }
