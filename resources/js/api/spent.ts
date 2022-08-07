@@ -1,9 +1,4 @@
 import { defHttp } from '/@/utils/http'
-import {
-  CreateCategoryParam,
-  CategoryModel,
-  CategoryPluckModel,
-} from './models/categoryModel'
 import { PaginationParams } from './models/paginationModel'
 
 const indexApi = '/spent'
@@ -67,14 +62,13 @@ export const activeCategory = (params: { id: number; isActive?: boolean }) =>
     params,
   })
 
-export const updateIssue = (id: number, data: CreateIssueData) =>
-  defHttp.put<CategoryModel>({
+export const updateSpent = (id: number, data: any) =>
+  defHttp.put({
     url: indexApi + '/' + id,
     data,
   })
 
-export const deleteCategory = (id: number, _u?: string) =>
+export const deleteSpent = (id: number, _u?: string) =>
   defHttp.delete({ url: indexApi + '/' + id, params: { _u } })
 
-export const getPluckCategory = () =>
-  defHttp.get<CategoryPluckModel[]>({ url: indexApi + '/pluck' })
+export const getPluckCategory = () => defHttp.get({ url: indexApi + '/pluck' })

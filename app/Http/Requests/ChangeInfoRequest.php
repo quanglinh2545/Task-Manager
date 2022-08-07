@@ -25,19 +25,9 @@ class ChangeInfoRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
-            'address' => 'required|string|max:255',
-            'note' => 'nullable|string'
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'name.required' => 'Hãy nhập tên của bạn',
-            'phone.required' => 'Hãy nhập số điện thoại của bạn',
-            'phone.regex' => 'Số điện thoại không hợp lệ',
-            'address.required' => 'Hãy nhập địa chỉ của bạn',
+            'note' => 'nullable|string',
+            'birthday' => 'nullable|date',
+            'address' => 'nullable|string',
         ];
     }
 }

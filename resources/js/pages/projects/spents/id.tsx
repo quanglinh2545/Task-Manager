@@ -1,27 +1,88 @@
 import {
+  Autocomplete,
   Box,
   Button,
+  Card,
+  CardContent,
   Chip,
   Container,
+  FormControl,
   Grid,
   Icon,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
   Skeleton,
+  TextField,
   Typography,
 } from '@mui/material'
 import Page404 from '../../404'
-import { Issue, getIssue } from '/@/api/issue'
-import { IssueStatus, IssuePercentComplete } from './format'
-import { getRelativeTime, formatDateOnly } from '/@/utils/format'
+import { SpentTime, getSpent, updateSpent } from '/@/api/spent'
+import { formatDateToDateDB } from '/@/utils/format'
+import useAuth from '/@/context/useAuth'
+import { DatePicker, LoadingButton } from '@mui/lab'
+import { OptionItem, useMemberAndCategory } from '../useMemberAndCategory'
+import useApp from '/@/context/useApp'
 
 const IssuePage: React.FC = () => {
   const params = useParams()
+  const { user } = useAuth()
   const isMounted = useRef(false)
   const [loading, setLoading] = useState(true)
-  const [issue, setIssue] = useState<Issue | null>(null)
+  const [issue, setIssue] = useState<SpentTime | null>(null)
+
+  const navigate = useNavigate()
+  const { toastSuccess, toastError } = useApp()
+  const { members } = useMemberAndCategory(params.key!)
+  const [errors, setErrors] = useState<Record<string, string[]>>({})
+  const [comment, setComment] = useState('')
+  const onCommentChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setComment(event.target.value)
+    },
+    []
+  )
+  const [startDate, setStartDate] = useState<Date | null>(new Date())
+  const [estimateTime, setEstimateTime] = useState('')
+  const [assignee, setAssignee] = useState<OptionItem | null>(null)
+  const [level, setLevel] = useState('Development')
+  const isAssignMe = useMemo(() => {
+    if (!assignee) return false
+    return assignee.value === user!.id
+  }, [assignee, user])
+  const handleChangeLevel = useCallback((e: SelectChangeEvent) => {
+    setLevel(e.target.value)
+  }, [])
+  const handleChangeEstimateTime = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setEstimateTime(e.target.value)
+    },
+    []
+  )
+  const handleChangeStartDate = useCallback((date: Date | null) => {
+    setStartDate(date)
+  }, [])
+  const handleAssigneeChange = useCallback(
+    (_: any, value: OptionItem | null) => {
+      if (!value) return
+      setAssignee(value)
+    },
+    []
+  )
+
   const fetchIssue = useCallback(async () => {
     try {
-      const response = await getIssue(params.id!, params.key!)
-      if (isMounted.current) setIssue(response)
+      const response = await getSpent(params.id!, params.key!)
+      if (isMounted.current) {
+        setStartDate(response.date ? new Date(response.date) : null)
+        setEstimateTime(response.hours?.toString() || '')
+        setLevel(response.activity)
+        setComment(response.comment || '')
+        setIssue(response)
+      }
     } catch (error: any) {
     } finally {
       setTimeout(() => (isMounted.current ? setLoading(false) : null), 250)
@@ -36,6 +97,44 @@ const IssuePage: React.FC = () => {
       isMounted.current = false
     }
   }, [params])
+  const handleAssignMe = useCallback(() => {
+    const member = members.find((m) => m.value === user!.id)
+    setAssignee(member || null)
+  }, [members, user])
+
+  useEffect(() => {
+    if (!issue || !members.length) return
+    const member = members.find((m) => m.value === issue.user_id)
+    setAssignee(member || null)
+  }, [members, issue])
+  const handleCreateIssue = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      setErrors({})
+      try {
+        setLoading(true)
+        await updateSpent(+params.id!, {
+          issue_id: +params.id!,
+          comment,
+          date: formatDateToDateDB(startDate),
+          activity: level,
+          user_id: assignee!.value,
+          project_key: params.key!,
+          hours: estimateTime ? +estimateTime : 0,
+        })
+        navigate('/projects/' + params.key! + '/spents')
+        toastSuccess('Log time successfully!')
+      } catch (error: any) {
+        const errors = error.data?.errors
+        if (errors) setErrors(error.data.errors)
+        else toastError('Something went wrong')
+      } finally {
+        setLoading(false)
+      }
+    },
+    [comment, startDate, estimateTime, level, assignee, params]
+  )
+
   if (loading)
     return (
       <Box
@@ -58,95 +157,109 @@ const IssuePage: React.FC = () => {
       component="main"
       sx={{
         flexGrow: 1,
-        p: 2,
+        py: 2,
       }}
     >
-      <div className="flex justify-between">
-        <Typography sx={{ mb: 1 }} variant="h5">
-          {issue.tracker}#{issue.id}
-          {IssueStatus(issue.status)}
-        </Typography>
-        <div>
-          <Button
-            LinkComponent={Link}
-            to={`/projects/${params.key}/issues/${params.id}/edit`}
-            variant="contained"
-            size="small"
-          >
-            Edit
-          </Button>
-          <Button size="small">Copy link</Button>
-        </div>
-      </div>
-      <Typography sx={{ pl: 4 }} variant="h4">
-        {issue.subject}
-      </Typography>
-      <Typography sx={{ pl: 4, pb: 4, pt: 2 }} variant="body1">
-        Added by{' '}
-        <Link
-          className="link"
-          to={`/projects/${params.key}/members/${issue.user_id}`}
-        >
-          {issue.user?.name}
-        </Link>{' '}
-        about {getRelativeTime(issue.created_at)}. Updated about{' '}
-        {getRelativeTime(issue.updated_at)}.
-      </Typography>
+      <form autoComplete="off" noValidate onSubmit={handleCreateIssue}>
+        <Container maxWidth={false}>
+          <div className="flex justify-between">
+            <Typography sx={{ mb: 3 }} variant="h5">
+              Edit Spent
+            </Typography>
+            <div>
+              <LoadingButton
+                color="primary"
+                variant="contained"
+                loading={loading}
+                type="submit"
+              >
+                Save
+              </LoadingButton>
+            </div>
+          </div>
+          <Card sx={{ mb: 2 }}>
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <Autocomplete
+                    disablePortal
+                    id="assignee"
+                    size="small"
+                    options={members}
+                    value={assignee}
+                    onChange={handleAssigneeChange}
+                    sx={{ width: 300 }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="User" />
+                    )}
+                  />
+                  {isAssignMe ? null : (
+                    <a className="link" onClick={handleAssignMe}>
+                      Assign to me
+                    </a>
+                  )}
+                </Grid>
 
-      <Grid container>
-        <Grid item xs={6} md={2}>
-          Category:
-          <br />
-          Priority:
-          <br />
-          Assignee:
-          <br />
-          Level:
-        </Grid>
-        <Grid item xs={6} md={2}>
-          {issue.category?.name || '-'}
-          <br />
-          {issue.priority}
-          <br />
-          <Link
-            className="link"
-            to={`/projects/${params.key}/members/${issue.user_id}`}
-          >
-            {issue.assignee?.name || '-'}
-          </Link>
-          <br />
-          {issue.level}
-        </Grid>
-
-        <Grid item xs={6} md={2}>
-          Start Date:
-          <br />
-          Due date:
-          <br />
-          % Done:
-          <br />
-          Estimated time:
-          <br />
-          Spent time:
-        </Grid>
-        <Grid item xs={6} md={2}>
-          {formatDateOnly(issue.start_date)}
-          <br />
-          {formatDateOnly(issue.due_date)}
-          <br />
-          {IssuePercentComplete(issue.percent_complete)}
-          {issue.estimate_time || 0} h
-          <br />
-          {issue.spent_time || 0} h
-        </Grid>
-      </Grid>
-      <hr className="mt-2" />
-      <h5 className="mt-2">Description:</h5>
-      <Typography sx={{ pt: 2 }} variant="body1">
-        {issue.description}
-      </Typography>
-      <hr className="mt-2" />
-      <h5 className="mt-2">Comments:</h5>
+                <Grid item xs={12}>
+                  <DatePicker
+                    label="Date"
+                    value={startDate}
+                    onChange={handleChangeStartDate}
+                    renderInput={(params: any) => (
+                      <TextField {...params} size="small" />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl sx={{ width: 300 }} size="small">
+                    <InputLabel>Activity</InputLabel>
+                    <Select
+                      size="small"
+                      input={<OutlinedInput label="Activity" />}
+                      value={level}
+                      onChange={handleChangeLevel}
+                    >
+                      <MenuItem value="Development">Development</MenuItem>
+                      <MenuItem value="Check">Check</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    sx={{ width: '240px' }}
+                    size="small"
+                    value={estimateTime}
+                    type="number"
+                    label="Hours"
+                    required
+                    onChange={handleChangeEstimateTime}
+                    error={!!errors.hours}
+                    helperText={errors.hours?.[0]}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">hours</InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Comment"
+                    name="comment"
+                    onChange={onCommentChange}
+                    value={comment}
+                    variant="outlined"
+                    size="small"
+                    multiline
+                    rows={4}
+                  />
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Container>
+      </form>
     </Box>
   )
 }

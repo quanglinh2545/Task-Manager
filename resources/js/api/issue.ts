@@ -12,8 +12,6 @@ export interface Comment {
   user_name: string
   user_avatar: string | null
   is_html: number
-  can_edit?: boolean
-  raw_content?: string
 }
 export interface Issue {
   assignee_id: null | number
@@ -110,6 +108,8 @@ export const updateIssue = (id: number, data: UpdateIssueData) =>
 
 export const deleteCategory = (id: number, _u?: string) =>
   defHttp.delete({ url: indexApi + '/' + id, params: { _u } })
+export const deleteIssue = (id: number, _u?: string) =>
+  defHttp.delete({ url: indexApi + '/' + id })
 
 export const getPluckCategory = () =>
   defHttp.get<any[]>({ url: indexApi + '/pluck' })
@@ -126,5 +126,3 @@ export const createComment = (data: any) => {
     data,
   })
 }
-export const deleteIssue = (id: number, _u?: string) =>
-  defHttp.delete({ url: indexApi + '/' + id })

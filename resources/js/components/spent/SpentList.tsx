@@ -1,9 +1,8 @@
-import React, { useCallback, useState } from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import React from 'react'
 import {
   Box,
   Card,
-  Checkbox,
   Table,
   TableBody,
   TableCell,
@@ -14,12 +13,11 @@ import {
   CircularProgress,
   TableSortLabel,
 } from '@mui/material'
-import { Issue } from '/@/api/issue'
-import { formatDateOnly, formatDate } from '/@/utils/format'
-import { issuePercent } from '/@/pages/projects/issues/format'
-import { SpentTime } from '/@/api/spent'
+import { formatDateOnly } from '/@/utils/format'
+import { SpentTime, deleteSpent } from '/@/api/spent'
 import IconDelete from '@mui/icons-material/Delete'
 import IconEdit from '@mui/icons-material/Edit'
+import useApp from '/@/context/useApp'
 
 interface Props {
   spents: SpentTime[]
@@ -33,15 +31,25 @@ interface Props {
   onSort: (field: string) => void
   sortField: string
   sortDirection: 'asc' | 'desc'
+  refresh: () => void
 }
 interface CustomerRowProps {
   spent: SpentTime
   projectKey: string
+  handleDeleteSpent: (event: React.MouseEvent) => void
 }
 
-const CustomerRow = ({ spent, projectKey }: CustomerRowProps) => {
+const CustomerRow = ({
+  spent,
+  projectKey,
+  handleDeleteSpent,
+}: CustomerRowProps) => {
   return (
-    <TableRow hover sx={{ '& > *': { borderBottom: 'unset' } }}>
+    <TableRow
+      hover
+      sx={{ '& > *': { borderBottom: 'unset' } }}
+      data-id={spent.id}
+    >
       <TableCell>{formatDateOnly(spent.date)}</TableCell>
       <TableCell padding="none">
         <Link
@@ -64,10 +72,14 @@ const CustomerRow = ({ spent, projectKey }: CustomerRowProps) => {
       <TableCell padding="none">{spent.hours}</TableCell>
       <TableCell padding="none">{spent.level}</TableCell>
       <TableCell padding="none">
-        <IconButton color="success">
+        <IconButton
+          color="success"
+          LinkComponent={Link}
+          to={`/projects/${projectKey}/spents/${spent.id}`}
+        >
           <IconEdit />
         </IconButton>
-        <IconButton color="error">
+        <IconButton color="error" onClick={handleDeleteSpent}>
           <IconDelete />
         </IconButton>
       </TableCell>
@@ -95,8 +107,10 @@ const IssueList: React.FC<Props> = ({
   sortField,
   sortDirection,
   onSort,
+  refresh,
   ...rest
 }) => {
+  const { createConfirmModal, toastSuccess } = useApp()
   const handleLimitChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onLimitChange(+event.target.value)
@@ -106,6 +120,23 @@ const IssueList: React.FC<Props> = ({
 
   const handlePageChange = useCallback((_: any, newPage: number) => {
     onPageChange(newPage + 1)
+  }, [])
+
+  const handleDeleteSpent = useCallback((event: React.MouseEvent) => {
+    const dataid = (event.target as HTMLElement).closest('tr')!.dataset.id
+    const id = dataid ? parseInt(dataid, 10) : 0
+    if (!id) return
+    createConfirmModal({
+      title: 'Delete spent time',
+      content: 'Are you sure you want to delete this spent time?',
+      onConfirm: async () => {
+        try {
+          await deleteSpent(id)
+          refresh()
+          toastSuccess('Spent time deleted')
+        } catch (e) {}
+      },
+    })
   }, [])
 
   return (
@@ -223,6 +254,7 @@ const IssueList: React.FC<Props> = ({
                     spent={spent}
                     key={spent.id}
                     projectKey={projectKey}
+                    handleDeleteSpent={handleDeleteSpent}
                   />
                 ))
               )}

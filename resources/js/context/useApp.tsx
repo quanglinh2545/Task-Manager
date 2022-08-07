@@ -30,8 +30,8 @@ interface CreateConfirmModalOption {
 const DEFAULT_OPTION = {
   title: '',
   content: '',
-  confirmText: 'Đồng ý',
-  cancelText: 'Đóng',
+  confirmText: 'Accept',
+  cancelText: 'Cancel',
   onConfirm: undefined,
   confirmDestructive: false,
 }

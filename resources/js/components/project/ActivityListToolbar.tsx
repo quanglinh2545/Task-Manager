@@ -89,41 +89,28 @@ const ActivityListToolbar: React.FC<Props> = (props) => {
       </Box>
       <Box sx={{ mt: 3 }}>
         <Card>
-          <CardContent>
-            <div className="flex items-center mb-2 gap-2">
-              Type:
-              {issueStatus.map((item) => (
-                <Chip
-                  className="ml-2"
-                  label={item}
-                  key={item}
-                  variant="outlined"
-                  onClick={() => setStatus(item)}
-                  color={status === item ? 'primary' : 'default'}
-                />
-              ))}
-            </div>
+          <CardContent sx={{ p: 2 }}>
             <Grid container spacing={1}>
-              <Grid item md={2} xs={6}>
+              <Grid item xs={12}>
                 <Autocomplete
+                  sx={{ width: 300 }}
                   disablePortal
                   id="assignee"
                   size="small"
                   options={members}
                   value={assigneeSelected}
                   onChange={handleSelectedAssigneeChange}
-                  fullWidth
                   renderInput={(params) => (
-                    <TextField {...params} label="Assignee" />
+                    <TextField {...params} label="User" />
                   )}
                 />
               </Grid>
-              <Grid item md={2} xs={6}>
+              <Grid item xs={12}>
                 <DatePicker
                   value={startDate}
                   onChange={setStartDate}
                   renderInput={(params) => (
-                    <TextField {...params} size="small" />
+                    <TextField {...params} size="small" label="10 days up to" />
                   )}
                 />
               </Grid>

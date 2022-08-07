@@ -72,7 +72,6 @@ const CustomerRow = ({ order, projectKey }: CustomerRowProps) => {
         </Link>
       </TableCell>
       <TableCell padding="none">{formatDate(order.updated_at)}</TableCell>
-      <TableCell padding="none">{order.category_name}</TableCell>
       <TableCell padding="none">{formatDateOnly(order.start_date)}</TableCell>
       <TableCell padding="none">
         <span className={isDueClass}>{formatDateOnly(order.due_date)}</span>
@@ -205,18 +204,6 @@ const IssueList: React.FC<Props> = ({
                     onClick={() => onSort('updated_at')}
                   >
                     Updated
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  padding="none"
-                  sortDirection={sortField === 'category_name' && sortDirection}
-                >
-                  <TableSortLabel
-                    active={sortField === 'category_name'}
-                    direction={sortDirection}
-                    onClick={() => onSort('category_name')}
-                  >
-                    Category
                   </TableSortLabel>
                 </TableCell>
                 <TableCell

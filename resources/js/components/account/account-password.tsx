@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import {
   Box,
-  Button,
   Card,
   CardContent,
   CardHeader,
@@ -9,11 +8,9 @@ import {
   Grid,
   TextField,
 } from '@mui/material'
-import useAuth from '../../context/useAuth'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import useApp from '../../context/useApp'
-import { phoneRegExp } from '/@/enums/regex'
 import { LoadingButton } from '@mui/lab'
 import { changePasswordApi } from '/@/api/auth'
 
@@ -27,23 +24,23 @@ const AccountPassword: React.FC<any> = (props) => {
       password_confirmation: '',
     },
     validationSchema: Yup.object({
-      old_password: Yup.string().required('Hãy nhập mật khẩu cũ của bạn'),
+      old_password: Yup.string().required('Old password is required'),
       password: Yup.string()
-        .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
-        .required('Hãy nhập mật khẩu mới'),
+        .min(6, 'Password must be at least 6 characters')
+        .required('Password is required'),
       password_confirmation: Yup.string()
         .equals(
-          [Yup.ref('password'), 'Mật khẩu không khớp'],
-          'Mật khẩu không khớp'
+          [Yup.ref('password'), 'Password is incorrect'],
+          'Password confirmation is incorrect'
         )
-        .required('Hãy nhập xác nhận mật khẩu'),
+        .required('Password confirmation is required'),
     }),
     onSubmit: async () => {
       try {
         setLoading(true)
         await changePasswordApi(formik.values)
         formik.handleReset({})
-        toastSuccess('Đổi mật khẩu thành công')
+        toastSuccess('Password changed successfully')
       } catch (err: any) {
         formik.setErrors(err.data.errors)
       } finally {
@@ -65,7 +62,7 @@ const AccountPassword: React.FC<any> = (props) => {
       onSubmit={formik.handleSubmit}
     >
       <Card>
-        <CardHeader title="Đổi mật khẩu" />
+        <CardHeader title="Change password" />
         <Divider />
         <CardContent>
           <Grid container spacing={3}>
@@ -78,7 +75,7 @@ const AccountPassword: React.FC<any> = (props) => {
                   formik.touched.old_password && formik.errors.old_password
                 }
                 fullWidth
-                label="Mật khẩu cũ"
+                label="Old password"
                 name="old_password"
                 required
                 onBlur={formik.handleBlur}
@@ -95,7 +92,7 @@ const AccountPassword: React.FC<any> = (props) => {
                 )}
                 helperText={formik.touched.password && formik.errors.password}
                 fullWidth
-                label="Mật khẩu mới"
+                label="Password"
                 name="password"
                 required
                 onBlur={formik.handleBlur}
@@ -116,7 +113,7 @@ const AccountPassword: React.FC<any> = (props) => {
                   formik.errors.password_confirmation
                 }
                 fullWidth
-                label="Nhập lại mật khẩu mới"
+                label="Password confirmation"
                 name="password_confirmation"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
@@ -143,7 +140,7 @@ const AccountPassword: React.FC<any> = (props) => {
             loading={loading}
             type="submit"
           >
-            Đổi mật khẩu
+            Change password
           </LoadingButton>
         </Box>
       </Card>

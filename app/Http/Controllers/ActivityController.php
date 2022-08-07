@@ -21,15 +21,14 @@ class ActivityController extends Controller
         if (!$project->hasPermissionShowIssue(auth()->user())) return $this->sendForbidden();
         $assignee = $request->assignee ?? '';
         $status = $request->status ?? '';
-        $minStartDate = Carbon::now()->subDays(10);
+
         $endDateRequest = $request->end_date ?? '';
+
         $endDate = $endDateRequest ? Carbon::parse($endDateRequest) : Carbon::now();
+        $startDate = $endDateRequest ? Carbon::parse($endDateRequest) : Carbon::now();
         $endDate->setTime(0, 0, 0, 0);
-        $startDate = $endDate->subDays(10);
-        if ($startDate->gt($minStartDate)) {
-            $startDate = $minStartDate;
-        }
-        $endDate = $endDate->addDays(10);
+        $startDate->setTime(0, 0, 0, 0);
+        $startDate->subDays(10);
 
         if (!in_array($status, [
             'All', Activity::TYPE_CREATE_PROJECT, Activity::TYPE_ISSUE, Activity::TYPE_MEMBER, Activity::TYPE_SPENT_TIME

@@ -96,34 +96,11 @@ const OrderListToolbar: React.FC<Props> = (props) => {
         <Typography sx={{ m: 1 }} variant="h4">
           Spent time
         </Typography>
-        {/* <Box sx={{ m: 1 }}>
-          <Button
-            LinkComponent={Link}
-            color="primary"
-            variant="contained"
-            to={`/projects/${params.key}/add/spent`}
-          >
-            New spent time
-          </Button>
-        </Box> */}
       </Box>
       <Box sx={{ mt: 3 }}>
         <Card>
           <CardContent>
             <h3 className="mb-2">Total spents: {totalHours} Hours</h3>
-            <div className="flex items-center mb-2 gap-2">
-              Status:
-              {issueStatus.map((item) => (
-                <Chip
-                  className="ml-2"
-                  label={item}
-                  key={item}
-                  variant="outlined"
-                  onClick={() => setStatus(item)}
-                  color={status === item ? 'primary' : 'default'}
-                />
-              ))}
-            </div>
             <Grid container spacing={1}>
               <Grid item xs={12} md={3}>
                 <TextField
@@ -158,25 +135,6 @@ const OrderListToolbar: React.FC<Props> = (props) => {
                   )}
                 />
               </Grid>
-              <Grid item md={2} xs={6}>
-                <FormControl fullWidth size="small">
-                  <InputLabel id="date-type">Level</InputLabel>
-                  <Select
-                    labelId="date-type"
-                    id="date-type"
-                    value={level}
-                    label="Start Date"
-                    onChange={handleLevelChange}
-                  >
-                    <MenuItem value="All">All</MenuItem>
-                    <MenuItem value="Easy">Easy</MenuItem>
-                    <MenuItem value="Normal">Normal</MenuItem>
-                    <MenuItem value="Hard">Hard</MenuItem>
-                    <MenuItem value="Extremely hard">Extremely hard</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-
               <Grid item md={5} xs={12}>
                 <div className="flex gap-2">
                   <div className="flex-1">

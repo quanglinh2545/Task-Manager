@@ -83,7 +83,6 @@ export const DashboardSidebar: React.FC<Props> = (props) => {
     >
       {project ? (
         <Box sx={{ p: 2, background: '#17a2ff', color: '#fff' }}>
-          <Typography variant="body2">Project:</Typography>
           <Typography variant="h5">{project.name}</Typography>
         </Box>
       ) : (
@@ -104,24 +103,6 @@ export const DashboardSidebar: React.FC<Props> = (props) => {
             title={item.title}
           />
         ))}
-      </Box>
-      <Divider sx={{ borderColor: '#efefef' }} />
-      <Box
-        sx={{
-          px: 1,
-          py: 3,
-        }}
-      >
-        <Button
-          color="info"
-          startIcon={<UserIcon />}
-          fullWidth
-          sx={{ mt: 2 }}
-          variant="contained"
-          onClick={() => navigate('/account')}
-        >
-          My account
-        </Button>
       </Box>
     </Box>
   )

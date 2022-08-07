@@ -30,6 +30,7 @@ class CreateSpentTimeRequest extends FormRequest
             'user_id' => 'required|numeric',
             'hours' => 'required|numeric|gt:0',
             'date' => 'required|date',
+            'comment' => 'nullable|string',
         ];
     }
 }

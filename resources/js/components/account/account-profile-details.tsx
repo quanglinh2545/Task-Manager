@@ -14,16 +14,21 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import useApp from '../../context/useApp'
 import { phoneRegExp } from '/@/enums/regex'
-import { LoadingButton } from '@mui/lab'
+import { DatePicker, LoadingButton } from '@mui/lab'
 import { changeInfoApi } from '/@/api/auth'
+import { formatDateToDateDB } from '/@/utils/format'
 
 export const AccountProfileDetails: React.FC<any> = (props) => {
   const { user, updateUser } = useAuth()
   const { toastError, toastSuccess } = useApp()
   const [loading, setLoading] = useState(false)
+  const [birthday, setBirthday] = useState(
+    user?.birthday ? new Date(user.birthday) : null
+  )
   const formik = useFormik({
     initialValues: {
       name: user!.name,
+      address: user!.address || '',
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Plase enter your name!'),
@@ -31,11 +36,16 @@ export const AccountProfileDetails: React.FC<any> = (props) => {
     onSubmit: async () => {
       try {
         setLoading(true)
-        await changeInfoApi(formik.values)
-        updateUser({
+        await changeInfoApi({
           ...formik.values,
+          birthday: formatDateToDateDB(birthday),
         })
-        toastSuccess('Cập nhật thông tin thành công')
+        updateUser({
+          ...user,
+          ...formik.values,
+          birthday: birthday ? formatDateToDateDB(birthday) : null,
+        })
+        toastSuccess('Profile updated successfully')
       } catch (err: any) {
         formik.setErrors(err.data.errors)
       } finally {
@@ -47,6 +57,9 @@ export const AccountProfileDetails: React.FC<any> = (props) => {
     () => Object.keys(formik.errors).length > 0,
     [formik.errors]
   )
+  const handleChangeDate = useCallback((date: Date | null) => {
+    setBirthday(date)
+  }, [])
 
   return (
     <form
@@ -82,6 +95,37 @@ export const AccountProfileDetails: React.FC<any> = (props) => {
                 onChange={formik.handleChange}
                 value={formik.values.name}
                 variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.address && formik.errors.address)}
+                helperText={formik.touched.address && formik.errors.address}
+                fullWidth
+                label="Address"
+                name="address"
+                required
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values.address}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <DatePicker
+                renderInput={(props) => (
+                  <TextField
+                    {...props}
+                    fullWidth
+                    name="birthday"
+                    required
+                    onBlur={formik.handleBlur}
+                    variant="outlined"
+                  />
+                )}
+                onChange={handleChangeDate}
+                value={birthday}
               />
             </Grid>
           </Grid>

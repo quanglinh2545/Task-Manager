@@ -19,4 +19,13 @@ class SpentTime extends Model
         'level',
         'date',
     ];
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+    public function issue()
+    {
+        return $this->belongsTo(Issue::class);
+    }
 }
