@@ -109,7 +109,6 @@ const AddIssue = () => {
           issue_id: +params.id!,
           comment,
           date: startDate!.toISOString().split('T')[0],
-          activity: level,
           user_id: assignee!.value,
           project_key: params.key!,
           hours: estimateTime ? +estimateTime : 0,
@@ -203,20 +202,6 @@ const AddIssue = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <FormControl sx={{ width: 300 }} size="small">
-                    <InputLabel>Activity</InputLabel>
-                    <Select
-                      size="small"
-                      input={<OutlinedInput label="Activity" />}
-                      value={level}
-                      onChange={handleChangeLevel}
-                    >
-                      <MenuItem value="Development">Development</MenuItem>
-                      <MenuItem value="Check">Check</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
                   <TextField
                     sx={{ width: '240px' }}
                     size="small"
@@ -250,15 +235,6 @@ const AddIssue = () => {
               </Grid>
             </CardContent>
           </Card>
-
-          <LoadingButton
-            color="primary"
-            variant="contained"
-            loading={loading}
-            type="submit"
-          >
-            Add
-          </LoadingButton>
         </Container>
       </form>
     </Box>

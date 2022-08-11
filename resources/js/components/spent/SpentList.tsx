@@ -59,7 +59,6 @@ const CustomerRow = ({
           {spent.user_name}
         </Link>
       </TableCell>
-      <TableCell padding="none">{spent.activity}</TableCell>
       <TableCell padding="none">
         <Link
           className="link"
@@ -70,7 +69,7 @@ const CustomerRow = ({
       </TableCell>
       <TableCell padding="none">{spent.comment}</TableCell>
       <TableCell padding="none">{spent.hours}</TableCell>
-      <TableCell padding="none">{spent.level}</TableCell>
+      <TableCell padding="none">{spent.estimate_time}</TableCell>
       <TableCell padding="none">
         <IconButton
           color="success"
@@ -171,18 +170,6 @@ const IssueList: React.FC<Props> = ({
                 </TableCell>
                 <TableCell
                   padding="none"
-                  sortDirection={sortField === 'activity' && sortDirection}
-                >
-                  <TableSortLabel
-                    active={sortField === 'activity'}
-                    direction={sortDirection}
-                    onClick={() => onSort('activity')}
-                  >
-                    Activity
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  padding="none"
                   sortDirection={sortField === 'issue' && sortDirection}
                 >
                   <TableSortLabel
@@ -214,21 +201,10 @@ const IssueList: React.FC<Props> = ({
                     direction={sortDirection}
                     onClick={() => onSort('hours')}
                   >
-                    Hours
+                    Spent time
                   </TableSortLabel>
                 </TableCell>
-                <TableCell
-                  padding="none"
-                  sortDirection={sortField === 'level' && sortDirection}
-                >
-                  <TableSortLabel
-                    active={sortField === 'level'}
-                    direction={sortDirection}
-                    onClick={() => onSort('level')}
-                  >
-                    Level
-                  </TableSortLabel>
-                </TableCell>
+                <TableCell padding="none">Eslimate time</TableCell>
                 <TableCell padding="none">Action</TableCell>
               </TableRow>
             </TableHead>

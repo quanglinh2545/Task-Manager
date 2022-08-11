@@ -115,6 +115,9 @@ $primary-color: #17a2ff;
   &.justify-between {
     justify-content: space-between;
   }
+  &.justify-end {
+    justify-content: flex-end;
+  }
   &.items-center {
     align-items: center;
   }
@@ -365,4 +368,18 @@ $primary-color: #17a2ff;
   img {
     max-width: 100%;
   }
+}
+
+.rdw-editor-wrapper {
+  background: #fff;
+}
+.editor {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.time {
+  color: #333;
+  font-size: 14px;
+  font-weight: normal;
 }

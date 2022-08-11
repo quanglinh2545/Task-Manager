@@ -27,6 +27,7 @@ import { getNotifications, Notification } from '/@/api/notification'
 import React from 'react'
 import { stateToHTML } from 'draft-js-export-html'
 import { convertFromRaw } from 'draft-js'
+import { formatDate } from '/@/utils/format'
 const DashboardNavbarRoot = styled(AppBar)(({ theme }: { theme: Theme }) => ({
   backgroundColor: theme.palette.background.paper,
   boxShadow: theme.shadows[3],
@@ -72,6 +73,9 @@ const NotificationItemFC: React.FC<NotificationItemProps> = ({
             __html: getNotificationMessage(notification) || '',
           }}
         ></div>
+        <div className="flex justify-end time">
+          {formatDate(notification.created_at, '-')}
+        </div>
       </Link>
     </li>
   )

@@ -51,6 +51,7 @@ function CommentComponent({
         border: '1px solid #e0e0e0',
         mb: 2,
         p: 2,
+        backgroundColor: '#fff',
       }}
     >
       <div className="flex items-start gap-1">

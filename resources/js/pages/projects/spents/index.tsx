@@ -133,6 +133,7 @@ const OrderPage = () => {
             sortField={sortField}
             sortDirection={sortDirection}
             onSort={handleSort}
+            refresh={fetchOrder}
           />
         </Box>
       </Container>

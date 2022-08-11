@@ -164,7 +164,7 @@ const IssuePage: React.FC = () => {
         <Container maxWidth={false}>
           <div className="flex justify-between">
             <Typography sx={{ mb: 3 }} variant="h5">
-              Edit Spent
+              Spent time
             </Typography>
             <div>
               <LoadingButton
@@ -209,20 +209,6 @@ const IssuePage: React.FC = () => {
                       <TextField {...params} size="small" />
                     )}
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl sx={{ width: 300 }} size="small">
-                    <InputLabel>Activity</InputLabel>
-                    <Select
-                      size="small"
-                      input={<OutlinedInput label="Activity" />}
-                      value={level}
-                      onChange={handleChangeLevel}
-                    >
-                      <MenuItem value="Development">Development</MenuItem>
-                      <MenuItem value="Check">Check</MenuItem>
-                    </Select>
-                  </FormControl>
                 </Grid>
                 <Grid item xs={12}>
                   <TextField

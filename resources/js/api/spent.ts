@@ -20,6 +20,7 @@ export interface SpentTime {
   updated_by: number
   user_id: number
   user_name: string
+  estimate_time: number
 }
 interface CreateIssueData {
   project_key: string
@@ -28,7 +29,6 @@ interface CreateIssueData {
   hours: number
   comment: string
   date: string
-  activity: string
 }
 
 export function getListSpents(params: any) {

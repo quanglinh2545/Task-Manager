@@ -23,7 +23,6 @@ import ProjectMemberPage from './pages/projects/members/id'
 
 import ProjectSpentListPage from './pages/projects/spents'
 import ProjectSpentPage from './pages/projects/spents/id'
-import ProjectSpentEditPage from './pages/projects/spents/edit'
 
 import ProjectSettingPage from './pages/projects/setting'
 import ProjectActivityPage from './pages/projects/activity'
@@ -125,10 +124,6 @@ function App() {
                         <Route
                           path="/projects/:key/members/:id"
                           element={<ProjectMemberPage />}
-                        />
-                        <Route
-                          path="/projects/:key/spents/:id/edit"
-                          element={<ProjectSpentEditPage />}
                         />
                         <Route path="*" element={<Page404 />} />
                       </Routes>

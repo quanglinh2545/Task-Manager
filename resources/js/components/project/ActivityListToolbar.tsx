@@ -91,7 +91,7 @@ const ActivityListToolbar: React.FC<Props> = (props) => {
         <Card>
           <CardContent sx={{ p: 2 }}>
             <Grid container spacing={1}>
-              <Grid item xs={12}>
+              <Grid item md={3} xs={6}>
                 <Autocomplete
                   sx={{ width: 300 }}
                   disablePortal
@@ -100,17 +100,23 @@ const ActivityListToolbar: React.FC<Props> = (props) => {
                   options={members}
                   value={assigneeSelected}
                   onChange={handleSelectedAssigneeChange}
+                  fullWidth
                   renderInput={(params) => (
-                    <TextField {...params} label="User" />
+                    <TextField {...params} label="User" fullWidth />
                   )}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item md={3} xs={6}>
                 <DatePicker
                   value={startDate}
                   onChange={setStartDate}
                   renderInput={(params) => (
-                    <TextField {...params} size="small" label="10 days up to" />
+                    <TextField
+                      {...params}
+                      size="small"
+                      label="10 days up to"
+                      fullWidth
+                    />
                   )}
                 />
               </Grid>

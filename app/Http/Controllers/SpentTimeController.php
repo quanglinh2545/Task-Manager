@@ -45,6 +45,7 @@ class SpentTimeController extends Controller
                 'users.name as user_name',
                 'issues.subject as issue_subject',
                 'issues.tracker as issue_tracker',
+                'issues.estimate_time as estimate_time',
             )
             ->leftJoin('users', 'spent_times.user_id', '=', 'users.id')
             ->leftJoin('issues', 'issues.id', '=', 'spent_times.issue_id')
