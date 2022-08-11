@@ -179,7 +179,7 @@ const AccountistResults: React.FC<Props> = ({
             onChange={handleSelectAll}
           />
         </TableCell>
-        {selectedCustomerIds.length > 0 ? (
+        {selectedCustomerIds.length > 0 && isAdmin ? (
           <TableCell colSpan={7} padding="checkbox">
             <LoadingButton
               color="error"

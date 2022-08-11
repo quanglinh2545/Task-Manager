@@ -175,18 +175,13 @@ class AccountController extends Controller
     public function destroy(User $account)
     {
         if ($account->id === auth()->user()->id) {
-            return $this->sendRespondError([], 'Không thể xóa tài khoản của chính bạn', 400);
+            return $this->sendRespondError([], 'Can not delete your account', 400);
         }
-        if (auth()->user()->hasRole('admin')) {
+        if (auth()->user()->role === User::ROLE_ADMIN) {
             $account->delete();
             return $this->sendRespondSuccess();
         }
-        if ($account->hasRole('admin') || $account->hasRole('agent')) {
-            return $this->sendRespondError([], 'Bạn không có quyền xoá tài khoản admin hoặc agent!', 400);
-        }
-        $account->delete();
-        return $this->sendRespondSuccess();
-        //
+        return $this->sendForbidden();
     }
 
     public function pluck(Request $request)
