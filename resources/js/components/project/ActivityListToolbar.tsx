@@ -76,16 +76,6 @@ const ActivityListToolbar: React.FC<Props> = (props) => {
             {displayDate}
           </Typography>
         </div>
-        <Box sx={{ m: 1 }}>
-          <Button
-            LinkComponent={Link}
-            color="primary"
-            variant="contained"
-            to={`/projects/${params.key}/add`}
-          >
-            New Issue
-          </Button>
-        </Box>
       </Box>
       <Box sx={{ mt: 3 }}>
         <Card>
