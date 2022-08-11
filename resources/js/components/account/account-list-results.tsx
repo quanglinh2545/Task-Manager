@@ -126,12 +126,12 @@ const AccountistResults: React.FC<Props> = ({
       const index = accounts.findIndex((account) => account.id === id)
       if (index === -1) return
       createConfirmModal({
-        title: 'Xóa tài khoản',
-        content: `Bạn có chắc muốn xóa tài khoản này?`,
+        title: 'Delete account',
+        content: `Are you sure?`,
         onConfirm: async () => {
           try {
             await deleteAccount(id)
-            toastSuccess('Xóa tài khoản thành công!')
+            toastSuccess('Delete success!')
             refresh()
           } catch (err: any) {
             toastError(err.data.message)
@@ -146,7 +146,7 @@ const AccountistResults: React.FC<Props> = ({
     const length = selectedCustomerIds.length
     if (!length) return
     createConfirmModal({
-      title: `Xoá ${length} tài khoản đang chọn`,
+      title: `De ${length} tài khoản đang chọn`,
       content: `Bạn đang chọn xoá ${length} tài khoản. Bạn có chắc muốn xoá? Sau khi xoá sẽ không thể khôi phục lại các tài khoản này!`,
       confirmDestructive: true,
       confirmText: 'Xoá',
@@ -179,68 +179,51 @@ const AccountistResults: React.FC<Props> = ({
             onChange={handleSelectAll}
           />
         </TableCell>
-        {selectedCustomerIds.length > 0 && isAdmin ? (
-          <TableCell colSpan={7} padding="checkbox">
-            <LoadingButton
-              color="error"
-              size="small"
-              variant="outlined"
-              onClick={handleDeleteMulti}
+        <TableCell sortDirection={sortField === 'name' && sortDirection}>
+          <Tooltip enterDelay={300} title="Sắp xếp">
+            <TableSortLabel
+              active={sortField === 'name'}
+              direction={sortDirection}
+              onClick={() => onSort('name')}
             >
-              Delete {selectedCustomerIds.length} accounts
-            </LoadingButton>
-          </TableCell>
-        ) : (
-          <>
-            <TableCell sortDirection={sortField === 'name' && sortDirection}>
-              <Tooltip enterDelay={300} title="Sắp xếp">
-                <TableSortLabel
-                  active={sortField === 'name'}
-                  direction={sortDirection}
-                  onClick={() => onSort('name')}
-                >
-                  Name
-                </TableSortLabel>
-              </Tooltip>
-            </TableCell>
-            <TableCell sortDirection={sortField === 'email' && sortDirection}>
-              <Tooltip enterDelay={300} title="Sắp xếp">
-                <TableSortLabel
-                  active={sortField === 'email'}
-                  direction={sortDirection}
-                  onClick={() => onSort('email')}
-                >
-                  Email
-                </TableSortLabel>
-              </Tooltip>
-            </TableCell>
-            <TableCell sortDirection={sortField === 'role' && sortDirection}>
-              <Tooltip enterDelay={300} title="Sắp xếp">
-                <TableSortLabel
-                  active={sortField === 'role'}
-                  direction={sortDirection}
-                  onClick={() => onSort('role')}
-                >
-                  Role
-                </TableSortLabel>
-              </Tooltip>
-            </TableCell>
-            <TableCell
-              sortDirection={sortField === 'created_at' && sortDirection}
+              Name
+            </TableSortLabel>
+          </Tooltip>
+        </TableCell>
+        <TableCell sortDirection={sortField === 'email' && sortDirection}>
+          <Tooltip enterDelay={300} title="Sắp xếp">
+            <TableSortLabel
+              active={sortField === 'email'}
+              direction={sortDirection}
+              onClick={() => onSort('email')}
             >
-              <Tooltip enterDelay={300} title="Sắp xếp">
-                <TableSortLabel
-                  active={sortField === 'created_at'}
-                  direction={sortDirection}
-                  onClick={() => onSort('created_at')}
-                >
-                  Created at
-                </TableSortLabel>
-              </Tooltip>
-            </TableCell>
-            {isAdmin && <TableCell>Action</TableCell>}
-          </>
-        )}
+              Email
+            </TableSortLabel>
+          </Tooltip>
+        </TableCell>
+        <TableCell sortDirection={sortField === 'role' && sortDirection}>
+          <Tooltip enterDelay={300} title="Sắp xếp">
+            <TableSortLabel
+              active={sortField === 'role'}
+              direction={sortDirection}
+              onClick={() => onSort('role')}
+            >
+              Role
+            </TableSortLabel>
+          </Tooltip>
+        </TableCell>
+        <TableCell sortDirection={sortField === 'created_at' && sortDirection}>
+          <Tooltip enterDelay={300} title="Sắp xếp">
+            <TableSortLabel
+              active={sortField === 'created_at'}
+              direction={sortDirection}
+              onClick={() => onSort('created_at')}
+            >
+              Created at
+            </TableSortLabel>
+          </Tooltip>
+        </TableCell>
+        {isAdmin && <TableCell>Action</TableCell>}
       </TableRow>
     )
   }, [
