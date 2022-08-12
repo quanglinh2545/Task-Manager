@@ -13,7 +13,6 @@ class SpentTime extends Model
         'issue_id',
         'project_id',
         'user_id',
-        'activity',
         'comment',
         'hours',
         'level',

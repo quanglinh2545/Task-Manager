@@ -194,7 +194,10 @@ class SpentTimeController extends Controller
     {
         if (!$spent->project->hasPermissionShowIssue(auth()->user())) return $this->sendForbidden();
         $issue = $spent->issue;
-        $spent->update($request->validated());
+        $data = $request->validated();
+        unset($data['issue_id']);
+        unset($data['project_key']);
+        $spent->update($data);
         $issue->update(
             [
                 'spent_time' => $issue->spents()->sum('hours'),

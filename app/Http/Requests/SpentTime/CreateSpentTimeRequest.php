@@ -26,7 +26,6 @@ class CreateSpentTimeRequest extends FormRequest
         return [
             'issue_id' => 'required|numeric',
             'project_key' => 'required|string',
-            'activity' => 'required|in:Development,Check',
             'user_id' => 'required|numeric',
             'hours' => 'required|numeric|gt:0',
             'date' => 'required|date',
