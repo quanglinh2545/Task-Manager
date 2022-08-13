@@ -324,15 +324,6 @@ const AddIssue = () => {
               </Grid>
             </CardContent>
           </Card>
-
-          <LoadingButton
-            color="primary"
-            variant="contained"
-            loading={loading}
-            type="submit"
-          >
-            Add
-          </LoadingButton>
         </Container>
       </form>
     </Box>
