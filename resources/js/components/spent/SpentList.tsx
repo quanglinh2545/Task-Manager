@@ -18,6 +18,7 @@ import { SpentTime, deleteSpent } from '/@/api/spent'
 import IconDelete from '@mui/icons-material/Delete'
 import IconEdit from '@mui/icons-material/Edit'
 import useApp from '/@/context/useApp'
+import useAuth from '/@/context/useAuth'
 
 interface Props {
   spents: SpentTime[]
@@ -37,12 +38,14 @@ interface CustomerRowProps {
   spent: SpentTime
   projectKey: string
   handleDeleteSpent: (event: React.MouseEvent) => void
+  canEdit: boolean
 }
 
 const CustomerRow = ({
   spent,
   projectKey,
   handleDeleteSpent,
+  canEdit,
 }: CustomerRowProps) => {
   return (
     <TableRow
@@ -71,16 +74,20 @@ const CustomerRow = ({
       <TableCell padding="none">{spent.hours}</TableCell>
       <TableCell padding="none">{spent.estimate_time}</TableCell>
       <TableCell padding="none">
-        <IconButton
-          color="success"
-          LinkComponent={Link}
-          to={`/projects/${projectKey}/spents/${spent.id}`}
-        >
-          <IconEdit />
-        </IconButton>
-        <IconButton color="error" onClick={handleDeleteSpent}>
-          <IconDelete />
-        </IconButton>
+        {canEdit && (
+          <>
+            <IconButton
+              color="success"
+              LinkComponent={Link}
+              to={`/projects/${projectKey}/spents/${spent.id}`}
+            >
+              <IconEdit />
+            </IconButton>
+            <IconButton color="error" onClick={handleDeleteSpent}>
+              <IconDelete />
+            </IconButton>
+          </>
+        )}
       </TableCell>
     </TableRow>
   )
@@ -137,6 +144,8 @@ const IssueList: React.FC<Props> = ({
       },
     })
   }, [])
+
+  const { user } = useAuth()
 
   return (
     <Card {...rest}>
@@ -231,6 +240,9 @@ const IssueList: React.FC<Props> = ({
                     key={spent.id}
                     projectKey={projectKey}
                     handleDeleteSpent={handleDeleteSpent}
+                    canEdit={
+                      user?.role !== 'member' || user?.id === spent.user_id
+                    }
                   />
                 ))
               )}

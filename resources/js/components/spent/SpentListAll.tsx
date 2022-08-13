@@ -243,7 +243,7 @@ const IssueList: React.FC<Props> = ({
                     key={spent.id}
                     handleDeleteSpent={handleDeleteSpent}
                     canEdit={
-                      user?.role === 'admin' || user?.id === spent.user_id
+                      user?.role !== 'member' || user?.id === spent.user_id
                     }
                   />
                 ))
