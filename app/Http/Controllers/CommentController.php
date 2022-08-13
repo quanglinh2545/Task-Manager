@@ -61,7 +61,7 @@ class CommentController extends Controller
                     'data' => [
                         'issue_id' => $issue->id,
                         'project_key' => $project->key,
-                        'content' => $request->content,
+                        'content' => $issue->tracker . '#' . $issue->id . ': ' .  $issue->subject,
                     ]
                 ]);
             }
