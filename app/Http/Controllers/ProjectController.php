@@ -58,6 +58,7 @@ class ProjectController extends Controller
         Activity::create([
             'project_id' => $project->id,
             'type' => Activity::TYPE_CREATE_PROJECT,
+            'user_id' => auth()->id(),
             'data' => [
                 'label' => 'Project ' . $project->name . ' has been created by ' . auth()->user()->name,
                 'link' => null

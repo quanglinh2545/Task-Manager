@@ -42,29 +42,31 @@ class CommentController extends Controller
         $project = Project::where('key', $request->project_key)->firstOrFail();
         if (!$project->hasPermissionShowIssue(auth()->user())) return $this->sendForbidden();
         $issue = $project->issues()->where('id', $request->issue_id)->firstOrFail();
-
-        Activity::create([
-            'user_id' => $request->user_id,
-            'project_id' => $project->id,
-            'object_id' => $request->issue_id,
-            'type' => Activity::TYPE_COMMENT,
-            'data' => [
-                'label' => '(' . $issue->tracker . ' #' . $issue->id . " ($issue->status)):",
-                'content' => $request->content,
-                'link' => 'issues/' . $request->issue_id,
-            ]
-        ]);
-        if ($issue->user) {
-            $issue->user->notifi([
-                'type' => Notification::TYPE_COMMENT_TASK,
-                'title' => auth()->user()->name . ' commented on your task.',
+        if ($issue->assignee_id) {
+            Activity::create([
+                'user_id' => $request->user_id,
+                'project_id' => $project->id,
+                'object_id' => $request->issue_id,
+                'type' => Activity::TYPE_COMMENT,
                 'data' => [
-                    'issue_id' => $issue->id,
-                    'project_key' => $project->key,
+                    'label' => '(' . $issue->tracker . ' #' . $issue->id . " ($issue->status)):",
                     'content' => $request->content,
+                    'link' => 'issues/' . $request->issue_id,
                 ]
             ]);
+            if ($issue->assignee) {
+                $issue->assignee->notifi([
+                    'type' => Notification::TYPE_COMMENT_TASK,
+                    'title' => auth()->user()->name . ' commented on your task.',
+                    'data' => [
+                        'issue_id' => $issue->id,
+                        'project_key' => $project->key,
+                        'content' => $request->content,
+                    ]
+                ]);
+            }
         }
+
         $comment = Comment::create([
             'user_id' => auth()->id(),
             'issue_id' => $issue->id,
