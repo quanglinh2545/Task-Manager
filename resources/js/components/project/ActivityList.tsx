@@ -22,7 +22,7 @@ const ActivityItemFC: React.FC<ActivityItemProps> = ({
   const content = useMemo(() => {
     if (activity.type !== 'Comment')
       return (
-        <div
+        <span
           className=""
           dangerouslySetInnerHTML={{ __html: activity.data.label }}
         />

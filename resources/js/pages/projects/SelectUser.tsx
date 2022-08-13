@@ -32,7 +32,7 @@ export default function SelectUser({ userSelected, setUserSelected }: Props) {
   }, [searchUser])
   useDebounce(() => fetchUser(), 350, [searchUser])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!mountedRef.current) {
       mountedRef.current = true
       fetchUser()

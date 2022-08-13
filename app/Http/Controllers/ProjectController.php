@@ -175,17 +175,19 @@ class ProjectController extends Controller
         if (!$project->hasPermissionCreateIssue(auth()->user())) return $this->sendForbidden();
         $searchKey = $request->search_key ?? '';
         $members = $project->members()
-            ->select('user_id')
-            ->get()
-            ->map(function ($member) {
-                return $member->id;
-            });
-        $users = User::where('role', 'member')
-            ->when($searchKey, function ($q, $searchKey) {
-                $q->where('name', 'like', '%' . $searchKey . '%')
+            ->pluck('user_id');
+        $users = User::where('role', 'member');
+        if ($searchKey) {
+            $users = $users->where(function ($q) use ($searchKey) {
+                $q->where(
+                    'name',
+                    'like',
+                    '%' . $searchKey . '%'
+                )
                     ->orWhere('email', 'like', '%' . $searchKey . '%');
-            })
-            ->whereNotIn('id', $members)
+            });
+        }
+        $users = $users->whereNotIn('id', $members)
             ->limit('12')
             ->get();
 
