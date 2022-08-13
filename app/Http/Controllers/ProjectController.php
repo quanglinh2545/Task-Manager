@@ -195,7 +195,7 @@ class ProjectController extends Controller
     public function gantt(string $projectKey)
     {
         $project = Project::where('key', $projectKey)->firstOrFail();
-        if (!$project->hasPermissionCreateIssue(auth()->user())) return $this->sendForbidden();
+        if (!$project->hasPermissionShowIssue(auth()->user())) return $this->sendForbidden();
         $issues = Issue::query()
             ->where('project_id', $project->id)
             ->leftJoin('users', 'users.id', '=', 'issues.assignee_id')
