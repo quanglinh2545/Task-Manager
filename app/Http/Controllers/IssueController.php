@@ -151,9 +151,10 @@ class IssueController extends Controller
             'project_id' => $project->id,
             'type' => Activity::TYPE_ISSUE,
             'object_id' => $issue->id,
-            'user_id' => $issue->assignee_id,
+            'user_id' => auth()->id(),
             'data' => [
-                'label' => "{$issue->tracker}#{$issue->id} (Open): {$issue->subject}",
+                'label' => "New Issue<br />
+                {$issue->tracker}#{$issue->id} (Open): {$issue->subject} has been created",
                 'link' => 'issues/' . $issue->id,
             ]
         ]);
@@ -311,9 +312,10 @@ class IssueController extends Controller
             'project_id' => $issue->project->id,
             'type' => Activity::TYPE_ISSUE,
             'object_id' => $issue->id,
-            'user_id' => $issue->assignee_id,
+            'user_id' => auth()->id(),
             'data' => [
-                'label' => "{$issue->tracker}#{$issue->id} ({$issue->status}): {$issue->subject}",
+                'label' => "Issue<br />
+                {$issue->tracker}#{$issue->id} ({$issue->status}): {$issue->subject} has been changed",
                 'link' => 'issues/' . $issue->id,
             ]
         ]);

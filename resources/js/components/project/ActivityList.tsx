@@ -20,7 +20,13 @@ const ActivityItemFC: React.FC<ActivityItemProps> = ({
   projectKey,
 }) => {
   const content = useMemo(() => {
-    if (activity.type !== 'Comment') return activity.data.label
+    if (activity.type !== 'Comment')
+      return (
+        <div
+          className=""
+          dangerouslySetInnerHTML={{ __html: activity.data.label }}
+        />
+      )
     if (!activity.data.content) return activity.data.label
     try {
       return (
@@ -34,9 +40,7 @@ const ActivityItemFC: React.FC<ActivityItemProps> = ({
                   convertFromRaw(JSON.parse(activity.data.content))
                 ).replace(/<img[^>]*>/g, '') || '',
             }}
-          >
-            {}
-          </div>
+          ></div>
         </>
       )
     } catch (err) {
@@ -94,7 +98,7 @@ const ActivityList: React.FC<Props> = ({ date, activities, projectKey }) => {
 
       <Box sx={{ flexGrow: 1, pt: 2 }}>
         {activities.map((activity) => (
-          <ActivityItemFC
+          <ActivityItem
             key={activity.id}
             activity={activity}
             projectKey={projectKey}
