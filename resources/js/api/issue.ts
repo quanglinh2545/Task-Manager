@@ -106,9 +106,7 @@ export const updateIssue = (id: number, data: UpdateIssueData) =>
     data,
   })
 
-export const deleteCategory = (id: number, _u?: string) =>
-  defHttp.delete({ url: indexApi + '/' + id, params: { _u } })
-export const deleteIssue = (id: number, _u?: string) =>
+export const deleteIssue = (id: number) =>
   defHttp.delete({ url: indexApi + '/' + id })
 
 export const getPluckCategory = () =>

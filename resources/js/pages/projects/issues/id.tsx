@@ -21,6 +21,7 @@ import {
   getIssueComments,
   Comment,
   createComment,
+  deleteIssue,
 } from '/@/api/issue'
 import { IssueStatus, IssuePercentComplete } from './format'
 import { getRelativeTime, formatDateOnly, formatDate } from '/@/utils/format'
@@ -110,7 +111,7 @@ function a11yProps(index: number) {
 
 const IssuePage: React.FC = () => {
   const params = useParams()
-  const { toastError, toastSuccess } = useApp()
+  const { toastError, toastSuccess, createConfirmModal } = useApp()
   const { project } = useProject()
   const { user } = useAuth()
   const isMounted = useRef(false)
@@ -132,6 +133,12 @@ const IssuePage: React.FC = () => {
     if (user.role !== 'member') return true
     if (project.current_role !== 'member') return true
     return issue?.assignee_id === user.id
+  }, [project, user, issue])
+
+  const canDelete = useMemo(() => {
+    if (!user || !project) return false
+    if (user.role !== 'member') return true
+    return project.current_role !== 'member'
   }, [project, user, issue])
 
   const fetchSpents = useCallback(async () => {
@@ -235,7 +242,7 @@ const IssuePage: React.FC = () => {
       isMounted.current = false
     }
   }, [params.id])
-
+  const navigate = useNavigate()
   const isDueClass = useMemo(() => {
     if (!issue || !issue.due_date) return ''
     const dueDate = new Date(issue.due_date)
@@ -243,6 +250,23 @@ const IssuePage: React.FC = () => {
     if (dueDate < now && issue.percent_complete < 100) return 'text-danger'
     return ''
   }, [issue])
+  const handleDelete = () =>
+    createConfirmModal({
+      title: 'Delete Issue',
+      content: 'Are you sure you want to delete this issue?',
+      onConfirm: async () => {
+        try {
+          await deleteIssue(+params.id!)
+          toastSuccess('Issue deleted')
+          navigate(`/projects/${params.key}/issues`)
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      confirmDestructive: true,
+      confirmText: 'Delete',
+    })
+
   if (loading)
     return (
       <Box
@@ -274,6 +298,17 @@ const IssuePage: React.FC = () => {
           {IssueStatus(issue.status)}
         </Typography>
         <div>
+          {canDelete && (
+            <Button
+              variant="contained"
+              size="small"
+              color="error"
+              onClick={handleDelete}
+              sx={{ mx: 2 }}
+            >
+              Delete
+            </Button>
+          )}
           {canEdit && (
             <>
               <Button
