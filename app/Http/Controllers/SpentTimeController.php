@@ -162,7 +162,7 @@ class SpentTimeController extends Controller
             $projects = Member::query()
                 ->where('user_id', auth()->user()->id)
                 ->pluck('project_id');
-            $query->whereIn('project_id', $projects);
+            $query->whereIn('spent_times.project_id', $projects);
         }
         $query = $query->select(
             'spent_times.*',
