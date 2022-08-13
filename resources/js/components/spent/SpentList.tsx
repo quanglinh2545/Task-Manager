@@ -19,6 +19,7 @@ import IconDelete from '@mui/icons-material/Delete'
 import IconEdit from '@mui/icons-material/Edit'
 import useApp from '/@/context/useApp'
 import useAuth from '/@/context/useAuth'
+import useProject from '/@/context/useProject'
 
 interface Props {
   spents: SpentTime[]
@@ -117,6 +118,7 @@ const IssueList: React.FC<Props> = ({
   ...rest
 }) => {
   const { createConfirmModal, toastSuccess } = useApp()
+  const { project } = useProject()
   const handleLimitChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onLimitChange(+event.target.value)
@@ -241,7 +243,8 @@ const IssueList: React.FC<Props> = ({
                     projectKey={projectKey}
                     handleDeleteSpent={handleDeleteSpent}
                     canEdit={
-                      user?.role !== 'member' || user?.id === spent.user_id
+                      project?.current_role !== 'member' ||
+                      user?.id === spent.user_id
                     }
                   />
                 ))
