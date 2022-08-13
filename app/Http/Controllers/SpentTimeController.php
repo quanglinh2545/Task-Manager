@@ -279,7 +279,7 @@ class SpentTimeController extends Controller
             'object_id' => $request->issue_id,
             'type' => Activity::TYPE_SPENT_TIME,
             'data' => [
-                'label' => $request->hours . ' hours (' . $issue->tracker . ' #' . $issue->id . " ($issue->status): $issue->subject)",
+                'label' => 'Spent time on task ' . $issue->stracker . '#' . $issue->id . ': ' . $issue->subject . ' has been changed to ' . $issue->spent_time,
                 'link' => 'issues/' . $request->issue_id . '?t=spent',
             ]
         ]);
@@ -333,6 +333,16 @@ class SpentTimeController extends Controller
                 'spent_time' => $issue->spents()->sum('hours'),
             ]
         );
+        Activity::create([
+            'user_id' => $request->user_id,
+            'project_id' => $spent->project->id,
+            'object_id' => $spent->issue_id,
+            'type' => Activity::TYPE_SPENT_TIME,
+            'data' => [
+                'label' => 'Spent time on task ' . $issue->stracker . '#' . $issue->id . ': ' . $issue->subject . ' has been changed to ' . $issue->spent_time,
+                'link' => 'issues/' . $request->issue_id . '?t=spent',
+            ]
+        ]);
         return $this->sendRespondSuccess();
     }
 

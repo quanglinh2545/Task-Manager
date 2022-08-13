@@ -48,7 +48,7 @@ class CommentController extends Controller
             'object_id' => $request->issue_id,
             'type' => Activity::TYPE_COMMENT,
             'data' => [
-                'label' => '(' . $issue->tracker . ' #' . $issue->id . " ($issue->status)):",
+                'label' => auth()->user()->name . ' comment on task ' . $issue->tracker . '#' . $issue->id . ': ' . $issue->subject,
                 'content' => $request->content,
                 'link' => 'issues/' . $request->issue_id,
             ]
