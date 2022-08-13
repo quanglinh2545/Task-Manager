@@ -39,7 +39,7 @@ class MemberController extends Controller
                 $q->where('members.role', $role);
             })
             ->select(
-                'users.id',
+                'members.id',
                 'users.name',
                 'users.email',
                 'members.role',
@@ -205,8 +205,6 @@ class MemberController extends Controller
                 ]
             ]);
         $member->role = $request->role;
-
-
         $member->save();
         return $this->sendRespondSuccess();
     }
