@@ -268,7 +268,9 @@ export const DashboardNavbar: React.FC<Props> = (props) => {
             </div>
           )}
         </div>
-
+        <Button LinkComponent={Link} to="/spents">
+          Spent time
+        </Button>
         <Button LinkComponent={Link} to="/accounts">
           Accounts
         </Button>

@@ -56,6 +56,9 @@ Route::group(
 
         Route::resource('account', AccountController::class);
         Route::get('/project/{project}/compact', [ProjectController::class, 'compact']);
+        Route::get('/spent/all', [SpentTimeController::class, 'all']);
+        Route::get('/spent/member', [SpentTimeController::class, 'memberAndProject']);
+
         Route::resource('/project', ProjectController::class);
         Route::resource('/issue', IssueController::class);
         Route::resource('/member', MemberController::class);

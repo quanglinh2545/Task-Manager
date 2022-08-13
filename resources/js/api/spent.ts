@@ -21,6 +21,8 @@ export interface SpentTime {
   user_id: number
   user_name: string
   estimate_time: number
+  project_name: string
+  project_key: string
 }
 interface CreateIssueData {
   project_key: string
@@ -39,6 +41,22 @@ export function getListSpents(params: any) {
   }>({
     url: indexApi,
     params,
+  })
+}
+export function getListSpentsAll(params: any) {
+  return defHttp.get<{
+    data: SpentTime[]
+    total: number
+    total_hours: number
+  }>({
+    url: indexApi + '/all',
+    params,
+  })
+}
+
+export function getMemberAndProject() {
+  return defHttp.get({
+    url: indexApi + '/member',
   })
 }
 

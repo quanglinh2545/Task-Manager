@@ -5,6 +5,7 @@ import { ProjectContextProvider } from './context/useProject'
 import IndexPage from './pages/index'
 import LoginPage from './pages/login'
 import RegisterPage from './pages/register'
+import SpentPage from './pages/spents'
 import AccountPage from './pages/account'
 import AccountDetailPage from './pages/account/id'
 import AccountsPage from './pages/accounts'
@@ -63,6 +64,7 @@ function App() {
                       <Routes>
                         <Route path="/" element={<IndexPage />} />
                         <Route path="/account" element={<AccountPage />} />
+                        <Route path="/spents" element={<SpentPage />} />
                         <Route
                           path="/account/:id"
                           element={<AccountDetailPage />}
@@ -112,7 +114,6 @@ function App() {
                           path="/projects/:key/issues/:id/spent"
                           element={<ProjectIssueSpentPage />}
                         />
-
                         <Route
                           path="/projects/:key/spents"
                           element={<ProjectSpentListPage />}
