@@ -456,6 +456,8 @@ const IssuePage: React.FC = () => {
               </h4>
               <div className="detail">
                 <b>Spent time:</b> {spent.hours} h
+                <br />
+                {spent.comment}
               </div>
             </div>
           ))}
