@@ -23,7 +23,7 @@ import {
   createComment,
 } from '/@/api/issue'
 import { IssueStatus, IssuePercentComplete } from './format'
-import { getRelativeTime, formatDateOnly } from '/@/utils/format'
+import { getRelativeTime, formatDateOnly, formatDate } from '/@/utils/format'
 import { SpentTime } from '/@/api/spent'
 import useApp from '/@/context/useApp'
 import { LoadingButton } from '@mui/lab'
@@ -72,7 +72,7 @@ function CommentComponent({
             {comment.user_name}
           </Link>
           <Typography variant="body2">
-            {getRelativeTime(comment.created_at)}
+            {formatDate(comment.created_at)}
           </Typography>
           <div
             className="markdown-body"
