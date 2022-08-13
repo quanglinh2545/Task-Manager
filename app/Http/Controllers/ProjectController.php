@@ -43,6 +43,7 @@ class ProjectController extends Controller
      */
     public function store(CreateProjectRequest $request)
     {
+        if (auth()->user()->role != User::ROLE_ADMIN) return $this->sendForbidden();
         $project = Project::create(
             array_merge($request->validated(), [
                 'user_id' => auth()->id(),

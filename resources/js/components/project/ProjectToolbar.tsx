@@ -8,11 +8,13 @@ import {
   SvgIcon,
   Typography,
 } from '@mui/material'
+import useAuth from '/@/context/useAuth'
 
 interface Props {
   toggleOpen: () => void
 }
 const ProjectToolbar: React.FC<Props> = ({ toggleOpen }) => {
+  const { user } = useAuth()
   return (
     <Box>
       <Box
@@ -28,9 +30,11 @@ const ProjectToolbar: React.FC<Props> = ({ toggleOpen }) => {
           Projects
         </Typography>
         <Box sx={{ m: 1 }}>
-          <Button color="primary" variant="contained" onClick={toggleOpen}>
-            Create new Project
-          </Button>
+          {user?.role === 'admin' && (
+            <Button color="primary" variant="contained" onClick={toggleOpen}>
+              Create new Project
+            </Button>
+          )}
         </Box>
       </Box>
     </Box>
