@@ -32,6 +32,7 @@ import { UserCircle as UserCircleIcon } from '/@/icons/user-circle'
 import { stateToHTML } from 'draft-js-export-html'
 import Editor from '/@/components/Editor'
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js'
+import useProject from '/@/context/useProject'
 interface TabPanelProps {
   children?: React.ReactNode
   index: number
@@ -110,6 +111,7 @@ function a11yProps(index: number) {
 const IssuePage: React.FC = () => {
   const params = useParams()
   const { toastError, toastSuccess } = useApp()
+  const { project } = useProject()
   const { user } = useAuth()
   const isMounted = useRef(false)
   const [loading, setLoading] = useState(true)
@@ -125,6 +127,12 @@ const IssuePage: React.FC = () => {
   const [spents, setSpents] = useState<SpentTime[]>([])
   const [comments, setComments] = useState<Comment[]>([])
   const [content, setContent] = useState(EditorState.createEmpty())
+  const canEdit = useMemo(() => {
+    if (!user || !project) return false
+    if (user.role !== 'member') return true
+    if (project.current_role !== 'member') return true
+    return issue?.assignee_id === user.id
+  }, [project, user, issue])
 
   const fetchSpents = useCallback(async () => {
     try {
@@ -266,24 +274,28 @@ const IssuePage: React.FC = () => {
           {IssueStatus(issue.status)}
         </Typography>
         <div>
-          <Button
-            LinkComponent={Link}
-            to={`/projects/${params.key}/issues/${params.id}/edit`}
-            variant="contained"
-            size="small"
-          >
-            Edit
-          </Button>
-          <Button
-            LinkComponent={Link}
-            to={`/projects/${params.key}/issues/${params.id}/spent`}
-            variant="outlined"
-            size="small"
-            color="success"
-            sx={{ mx: 2 }}
-          >
-            Log time
-          </Button>
+          {canEdit && (
+            <>
+              <Button
+                LinkComponent={Link}
+                to={`/projects/${params.key}/issues/${params.id}/edit`}
+                variant="contained"
+                size="small"
+              >
+                Edit
+              </Button>
+              <Button
+                LinkComponent={Link}
+                to={`/projects/${params.key}/issues/${params.id}/spent`}
+                variant="outlined"
+                size="small"
+                color="success"
+                sx={{ mx: 2 }}
+              >
+                Log time
+              </Button>
+            </>
+          )}
         </div>
       </div>
       <Typography sx={{ pl: 4 }} variant="h4">
@@ -366,20 +378,22 @@ const IssuePage: React.FC = () => {
             <CircularProgress />
           ) : (
             <div>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={8}>
-                  <Editor setEditorState={setContent} editorState={content} />
+              {canEdit && (
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={8}>
+                    <Editor setEditorState={setContent} editorState={content} />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <LoadingButton
+                      loading={loadingComment}
+                      variant="outlined"
+                      onClick={handleCreateComment}
+                    >
+                      Add Comment
+                    </LoadingButton>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={4}>
-                  <LoadingButton
-                    loading={loadingComment}
-                    variant="outlined"
-                    onClick={handleCreateComment}
-                  >
-                    Add Comment
-                  </LoadingButton>
-                </Grid>
-              </Grid>
+              )}
               <div className="mt-2">
                 {comments.map((comment) => (
                   <CommentComponent

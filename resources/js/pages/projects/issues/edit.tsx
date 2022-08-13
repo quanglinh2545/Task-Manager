@@ -374,7 +374,6 @@ const AddIssue = () => {
                       }}
                     />
                   </Grid>
-
                   <Grid item md={6} xs={12}></Grid>
                   <Grid item md={6} xs={12}>
                     <TextField
@@ -394,15 +393,6 @@ const AddIssue = () => {
                 </Grid>
               </CardContent>
             </Card>
-
-            <LoadingButton
-              color="primary"
-              variant="contained"
-              loading={loading}
-              type="submit"
-            >
-              Save
-            </LoadingButton>
           </Container>
         </form>
       </Box>
