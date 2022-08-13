@@ -204,7 +204,7 @@ const IssueList: React.FC<Props> = ({
                     Spent time
                   </TableSortLabel>
                 </TableCell>
-                <TableCell padding="none">Eslimate time</TableCell>
+                <TableCell padding="none">Estimate time</TableCell>
                 <TableCell padding="none">Action</TableCell>
               </TableRow>
             </TableHead>
