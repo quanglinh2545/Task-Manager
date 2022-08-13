@@ -42,7 +42,7 @@ class CommentController extends Controller
         $project = Project::where('key', $request->project_key)->firstOrFail();
         if (!$project->hasPermissionShowIssue(auth()->user())) return $this->sendForbidden();
         $issue = $project->issues()->where('id', $request->issue_id)->firstOrFail();
-        if ($issue->assignee_id && auth()->id != $issue->assignee_id) {
+        if ($issue->assignee_id && auth()->id() != $issue->assignee_id) {
             Activity::create([
                 'user_id' => $request->user_id,
                 'project_id' => $project->id,

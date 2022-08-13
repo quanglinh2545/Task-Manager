@@ -229,6 +229,7 @@ class IssueController extends Controller
             $params['assignee_id'] = $issue->assignee_id;
         }
 
+
         $content = '';
         if ($issue->tracker != $request->tracker) {
             $content .= "<li>Tracker: {$issue->tracker} -> {$request->tracker}</li>";
@@ -293,6 +294,18 @@ class IssueController extends Controller
                 'content' => '<ul>' . $content . '</ul>',
                 'is_html' => 1,
             ]);
+
+        if (auth()->id() != $issue->project->user_id) {
+            $issue->project->user->notifi([
+                'type' => Notification::TYPE_ASSIGN_TASK,
+                'title' => auth()->user()->name . ' changed the issue',
+                'data' => [
+                    'project_key' => $issue->project->key,
+                    'link' => '/projects/' . $issue->project->key . '/issues/' . $issue->id,
+                    'content' => $request->tracker . '#' . $issue->id . ': ' .  $request->subject,
+                ]
+            ]);
+        }
 
         Activity::create([
             'project_id' => $issue->project->id,
