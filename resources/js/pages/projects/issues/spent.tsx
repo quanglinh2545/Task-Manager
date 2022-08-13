@@ -172,26 +172,6 @@ const AddIssue = () => {
             <CardContent>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
-                  <Autocomplete
-                    disablePortal
-                    id="assignee"
-                    size="small"
-                    options={members}
-                    value={assignee}
-                    onChange={handleAssigneeChange}
-                    sx={{ width: 300 }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="User" />
-                    )}
-                  />
-                  {isAssignMe ? null : (
-                    <a className="link" onClick={handleAssignMe}>
-                      Assign to me
-                    </a>
-                  )}
-                </Grid>
-
-                <Grid item xs={12}>
                   <DatePicker
                     label="Date"
                     value={startDate}

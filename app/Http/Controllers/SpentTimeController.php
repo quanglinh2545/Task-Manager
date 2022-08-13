@@ -259,11 +259,11 @@ class SpentTimeController extends Controller
         $project = Project::where('key', $request->project_key)->firstOrFail();
         if (!$project->hasPermissionShowIssue(auth()->user())) return $this->sendForbidden();
         $issue = $project->issues()->where('id', $request->issue_id)->firstOrFail();
-
         $spent = SpentTime::create(array_merge(
             $request->validated(),
             [
                 'project_id' => $project->id,
+                'user_id' => $issue->assignee_id ?? $issue->user_id,
             ]
         ));
 
